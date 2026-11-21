@@ -1,0 +1,541 @@
+{
+  "schema": "rust-anything/bridge@1",
+  "root": "/home/gaida/Documents/projects/personal_2/cv-forge/original",
+  "unit": "src/cv_builder/",
+  "language": "python",
+  "kind": "pyo3",
+  "crate_name": "cvforge-units",
+  "exports": [
+    {
+      "name": "format_date",
+      "file": "src/cv_builder/dates.py",
+      "line": 8,
+      "params": [
+        {
+          "name": "value",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "string",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "format_range",
+      "file": "src/cv_builder/dates.py",
+      "line": 18,
+      "params": [
+        {
+          "name": "start",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        },
+        {
+          "name": "end",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        },
+        {
+          "name": "ongoing_if_no_end",
+          "ts_type": "boolean",
+          "optional": true,
+          "rest": false,
+          "default": "True",
+          "keyword_only": true
+        },
+        {
+          "name": "present",
+          "ts_type": "string",
+          "optional": true,
+          "rest": false,
+          "default": "\"Present\"",
+          "keyword_only": true
+        },
+        {
+          "name": "separator",
+          "ts_type": "string",
+          "optional": true,
+          "rest": false,
+          "default": "\" - \"",
+          "keyword_only": true
+        }
+      ],
+      "returns": "string",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "network_icon",
+      "file": "src/cv_builder/icons.py",
+      "line": 42,
+      "params": [
+        {
+          "name": "network",
+          "ts_type": "string",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "string",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "keep",
+      "file": "src/cv_builder/view.py",
+      "line": 48,
+      "params": [
+        {
+          "name": "text",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "Markup | undefined",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "inline",
+      "file": "src/cv_builder/view.py",
+      "line": 55,
+      "params": [
+        {
+          "name": "text",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "Markup",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "paragraphs",
+      "file": "src/cv_builder/view.py",
+      "line": 65,
+      "params": [
+        {
+          "name": "text",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "Markup[]",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "pretty_url",
+      "file": "src/cv_builder/view.py",
+      "line": 71,
+      "params": [
+        {
+          "name": "url",
+          "ts_type": "string",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "string",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "href",
+      "file": "src/cv_builder/view.py",
+      "line": 75,
+      "params": [
+        {
+          "name": "url",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "string | undefined",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    },
+    {
+      "name": "language_rating",
+      "file": "src/cv_builder/view.py",
+      "line": 267,
+      "params": [
+        {
+          "name": "fluency",
+          "ts_type": "string | undefined",
+          "optional": false,
+          "rest": false
+        },
+        {
+          "name": "rating",
+          "ts_type": "int | undefined",
+          "optional": false,
+          "rest": false
+        }
+      ],
+      "returns": "int",
+      "is_async": false,
+      "is_generator": false,
+      "type_params": [],
+      "uses_instanceof": false
+    }
+  ],
+  "classes": [],
+  "js_only": [
+    {
+      "name": "load_cv",
+      "file": "src/cv_builder/cli.py",
+      "line": 34,
+      "reason": "covered by the whole-app CLI cases (validate, build)"
+    },
+    {
+      "name": "cmd_build",
+      "file": "src/cv_builder/cli.py",
+      "line": 55,
+      "reason": "covered by the whole-app CLI cases"
+    },
+    {
+      "name": "cmd_validate",
+      "file": "src/cv_builder/cli.py",
+      "line": 82,
+      "reason": "covered by the whole-app CLI cases"
+    },
+    {
+      "name": "cmd_schema",
+      "file": "src/cv_builder/cli.py",
+      "line": 94,
+      "reason": "covered by the whole-app CLI cases"
+    },
+    {
+      "name": "cmd_templates",
+      "file": "src/cv_builder/cli.py",
+      "line": 104,
+      "reason": "covered by the whole-app CLI cases"
+    },
+    {
+      "name": "cmd_init",
+      "file": "src/cv_builder/cli.py",
+      "line": 116,
+      "reason": "covered by the whole-app CLI cases"
+    },
+    {
+      "name": "build_parser",
+      "file": "src/cv_builder/cli.py",
+      "line": 134,
+      "reason": "a command-line entry point: it stays in Python, and `app front-door` takes the command line over when the whole app moves"
+    },
+    {
+      "name": "main",
+      "file": "src/cv_builder/cli.py",
+      "line": 172,
+      "reason": "a command-line entry point: it stays in Python, and `app front-door` takes the command line over when the whole app moves"
+    },
+    {
+      "name": "icon",
+      "file": "src/cv_builder/icons.py",
+      "line": 46,
+      "reason": "SVG markup for the HTML templates; the Typst templates draw icons themselves"
+    },
+    {
+      "name": "json_schema",
+      "file": "src/cv_builder/model.py",
+      "line": 375,
+      "reason": "the schema ships as the same file, checked byte for byte by the schema cases"
+    },
+    {
+      "name": "Location",
+      "file": "src/cv_builder/model.py",
+      "line": 142,
+      "reason": "class: inherits from _Model, public class attribute `address`, public class attribute `city`, public class attribute `countryCode`, public class attribute `postalCode`, public class attribute `region`"
+    },
+    {
+      "name": "Profile",
+      "file": "src/cv_builder/model.py",
+      "line": 150,
+      "reason": "class: inherits from _Model, public class attribute `network`, public class attribute `url`, public class attribute `username`"
+    },
+    {
+      "name": "Basics",
+      "file": "src/cv_builder/model.py",
+      "line": 156,
+      "reason": "class: inherits from _Model, public class attribute `email`, public class attribute `image`, public class attribute `label`, public class attribute `location`, public class attribute `name`, public class attribute `phone`, public class attribute `profiles`, public class attribute `summary`, public class attribute `url`"
+    },
+    {
+      "name": "TitleSpan",
+      "file": "src/cv_builder/model.py",
+      "line": 171,
+      "reason": "class: inherits from _Dated, public class attribute `position`"
+    },
+    {
+      "name": "Work",
+      "file": "src/cv_builder/model.py",
+      "line": 177,
+      "reason": "class: inherits from _Dated, public class attribute `description`, public class attribute `highlights`, public class attribute `location`, public class attribute `name`, public class attribute `position`, public class attribute `project`, public class attribute `summary`, public class attribute `titleHistory`, public class attribute `url`"
+    },
+    {
+      "name": "Volunteer",
+      "file": "src/cv_builder/model.py",
+      "line": 198,
+      "reason": "class: inherits from _Dated, public class attribute `highlights`, public class attribute `location`, public class attribute `organization`, public class attribute `position`, public class attribute `summary`, public class attribute `url`"
+    },
+    {
+      "name": "Education",
+      "file": "src/cv_builder/model.py",
+      "line": 207,
+      "reason": "class: inherits from _Dated, public class attribute `area`, public class attribute `courses`, public class attribute `highlights`, public class attribute `institution`, public class attribute `location`, public class attribute `score`, public class attribute `studyType`, public class attribute `url`"
+    },
+    {
+      "name": "Award",
+      "file": "src/cv_builder/model.py",
+      "line": 218,
+      "reason": "class: inherits from _Model, public class attribute `awarder`, public class attribute `date`, public class attribute `summary`, public class attribute `title`"
+    },
+    {
+      "name": "Certificate",
+      "file": "src/cv_builder/model.py",
+      "line": 225,
+      "reason": "class: inherits from _Model, public class attribute `date`, public class attribute `issuer`, public class attribute `name`, public class attribute `url`"
+    },
+    {
+      "name": "Publication",
+      "file": "src/cv_builder/model.py",
+      "line": 232,
+      "reason": "class: inherits from _Model, public class attribute `name`, public class attribute `publisher`, public class attribute `releaseDate`, public class attribute `summary`, public class attribute `url`"
+    },
+    {
+      "name": "Skill",
+      "file": "src/cv_builder/model.py",
+      "line": 240,
+      "reason": "class: inherits from _Model, public class attribute `keywords`, public class attribute `level`, public class attribute `name`"
+    },
+    {
+      "name": "Language",
+      "file": "src/cv_builder/model.py",
+      "line": 246,
+      "reason": "class: inherits from _Model, public class attribute `fluency`, public class attribute `language`, public class attribute `rating`"
+    },
+    {
+      "name": "Interest",
+      "file": "src/cv_builder/model.py",
+      "line": 257,
+      "reason": "class: inherits from _Model, public class attribute `keywords`, public class attribute `name`"
+    },
+    {
+      "name": "Reference",
+      "file": "src/cv_builder/model.py",
+      "line": 262,
+      "reason": "class: inherits from _Model, public class attribute `name`, public class attribute `reference`"
+    },
+    {
+      "name": "Project",
+      "file": "src/cv_builder/model.py",
+      "line": 267,
+      "reason": "class: inherits from _Dated, public class attribute `description`, public class attribute `entity`, public class attribute `highlights`, public class attribute `keywords`, public class attribute `name`, public class attribute `roles`, public class attribute `type`, public class attribute `url`"
+    },
+    {
+      "name": "Achievement",
+      "file": "src/cv_builder/model.py",
+      "line": 278,
+      "reason": "class: inherits from _Model, public class attribute `icon`, public class attribute `summary`, public class attribute `title`"
+    },
+    {
+      "name": "Meta",
+      "file": "src/cv_builder/model.py",
+      "line": 286,
+      "reason": "class: inherits from BaseModel, public class attribute `canonical`, public class attribute `lastModified`, public class attribute `model_config`, public class attribute `version`"
+    },
+    {
+      "name": "HeaderLayout",
+      "file": "src/cv_builder/model.py",
+      "line": 297,
+      "reason": "class: inherits from _Model, public class attribute `contacts`, public class attribute `photo`, public class attribute `profiles`"
+    },
+    {
+      "name": "Layout",
+      "file": "src/cv_builder/model.py",
+      "line": 310,
+      "reason": "class: inherits from _Model, public class attribute `accentColor`, public class attribute `columns`, public class attribute `documentTitle`, public class attribute `header`, public class attribute `maxPages`, public class attribute `pageSize`, public class attribute `template`, public class attribute `titles`"
+    },
+    {
+      "name": "CV",
+      "file": "src/cv_builder/model.py",
+      "line": 354,
+      "reason": "class: inherits from _Model, public class attribute `achievements`, public class attribute `awards`, public class attribute `basics`, public class attribute `certificates`, public class attribute `education`, public class attribute `interests`, public class attribute `languages`, public class attribute `layout`, public class attribute `meta`, public class attribute `projects`, public class attribute `publications`, public class attribute `references`, public class attribute `schema_ref`, public class attribute `skills`, public class attribute `volunteer`, public class attribute `work`"
+    },
+    {
+      "name": "paginate_column",
+      "file": "src/cv_builder/paginate.py",
+      "line": 38,
+      "reason": "takes Unit dataclass instances, which the bridge cannot pass; ported with the original's tests/test_paginate.py as Rust tests, and covered end to end by the build cases"
+    },
+    {
+      "name": "Unit",
+      "file": "src/cv_builder/paginate.py",
+      "line": 17,
+      "reason": "class: `@property` method `opens_section`, decorated with `@dataclass`, public class attribute `bottom`, public class attribute `index`, public class attribute `section`, public class attribute `top`"
+    },
+    {
+      "name": "Overflow",
+      "file": "src/cv_builder/paginate.py",
+      "line": 31,
+      "reason": "class: decorated with `@dataclass`, public class attribute `available`, public class attribute `column`, public class attribute `height`, public class attribute `unit`"
+    },
+    {
+      "name": "available_templates",
+      "file": "src/cv_builder/render.py",
+      "line": 165,
+      "reason": "takes CV/Template objects; covered end to end by the build cases"
+    },
+    {
+      "name": "resolve_header",
+      "file": "src/cv_builder/render.py",
+      "line": 194,
+      "reason": "takes CV/Template objects; covered end to end by the build cases"
+    },
+    {
+      "name": "resolve_settings",
+      "file": "src/cv_builder/render.py",
+      "line": 218,
+      "reason": "takes CV/Template objects; covered end to end by the build cases"
+    },
+    {
+      "name": "LocalFetcher",
+      "file": "src/cv_builder/render.py",
+      "line": 40,
+      "reason": "class: inherits from URLFetcher, public attribute `roots`, takes `*args`"
+    },
+    {
+      "name": "RenderError",
+      "file": "src/cv_builder/render.py",
+      "line": 79,
+      "reason": "class: inherits from Exception"
+    },
+    {
+      "name": "Template",
+      "file": "src/cv_builder/render.py",
+      "line": 87,
+      "reason": "class: `@classmethod` method `load`, `@property` method `aliases`, `@property` method `column_names`, `@property` method `description`, `@property` method `fit_tolerance`, `@property` method `label`, `@property` method `main_column`, `@property` method `reading_order`, `@property` method `repeat_titles`, `@property` method `split_entries`, decorated with `@dataclass`, public class attribute `config`, public class attribute `name`, public class attribute `path`"
+    },
+    {
+      "name": "Options",
+      "file": "src/cv_builder/render.py",
+      "line": 173,
+      "reason": "class: decorated with `@dataclass`, public class attribute `accent`, public class attribute `max_pages`, public class attribute `page_size`, public class attribute `template`"
+    },
+    {
+      "name": "Settings",
+      "file": "src/cv_builder/render.py",
+      "line": 183,
+      "reason": "class: decorated with `@dataclass`, public class attribute `accent`, public class attribute `columns`, public class attribute `document_title`, public class attribute `header`, public class attribute `max_pages`, public class attribute `page_size`, public class attribute `template`, public class attribute `titles`"
+    },
+    {
+      "name": "Chunk",
+      "file": "src/cv_builder/render.py",
+      "line": 268,
+      "reason": "class: decorated with `@dataclass`, public class attribute `continued`, public class attribute `id`, public class attribute `items`, public class attribute `kind`, public class attribute `title`"
+    },
+    {
+      "name": "Page",
+      "file": "src/cv_builder/render.py",
+      "line": 279,
+      "reason": "class: decorated with `@dataclass`, public class attribute `columns`, public class attribute `header`"
+    },
+    {
+      "name": "Measure",
+      "file": "src/cv_builder/render.py",
+      "line": 285,
+      "reason": "class: decorated with `@dataclass`, public class attribute `header_height`, public class attribute `line_px`, public class attribute `line_width_px`, public class attribute `text_px`, public class attribute `title_heights`, public class attribute `units`"
+    },
+    {
+      "name": "Pagination",
+      "file": "src/cv_builder/render.py",
+      "line": 297,
+      "reason": "class: `@property` method `pages`, decorated with `@dataclass`, public class attribute `columns`, public class attribute `content_height`, public class attribute `header_height`, public class attribute `overflows`, public class attribute `title_heights`"
+    },
+    {
+      "name": "Fit",
+      "file": "src/cv_builder/render.py",
+      "line": 341,
+      "reason": "class: decorated with `@dataclass`, public class attribute `designed_line_height`, public class attribute `fits`, public class attribute `line_chars`, public class attribute `line_height`, public class attribute `max_pages`, public class attribute `over_lines`, public class attribute `text_pt`, public class attribute `tightness`"
+    },
+    {
+      "name": "BuildResult",
+      "file": "src/cv_builder/render.py",
+      "line": 362,
+      "reason": "class: decorated with `@dataclass`, public class attribute `fit`, public class attribute `last_page_fill`, public class attribute `notes`, public class attribute `overflows`, public class attribute `pages`"
+    },
+    {
+      "name": "Builder",
+      "file": "src/cv_builder/render.py",
+      "line": 373,
+      "reason": "class: public attribute `base_dir`, public attribute `cv`, public attribute `env`, public attribute `fetcher`, public attribute `font_config`, public attribute `header`, public attribute `sections`, public attribute `template`, public attribute `tightness`"
+    },
+    {
+      "name": "build_header",
+      "file": "src/cv_builder/view.py",
+      "line": 285,
+      "reason": "takes CV/Template objects; covered end to end by the build cases"
+    },
+    {
+      "name": "build_sections",
+      "file": "src/cv_builder/view.py",
+      "line": 308,
+      "reason": "takes CV/Template objects; covered end to end by the build cases"
+    },
+    {
+      "name": "split_entries",
+      "file": "src/cv_builder/view.py",
+      "line": 351,
+      "reason": "takes CV/Template objects; covered end to end by the build cases"
+    },
+    {
+      "name": "MetaItem",
+      "file": "src/cv_builder/view.py",
+      "line": 85,
+      "reason": "class: decorated with `@dataclass`, public class attribute `href`, public class attribute `icon`, public class attribute `text`"
+    },
+    {
+      "name": "Entry",
+      "file": "src/cv_builder/view.py",
+      "line": 92,
+      "reason": "class: decorated with `@dataclass`, public class attribute `bullets`, public class attribute `continued`, public class attribute `meta`, public class attribute `paragraphs`, public class attribute `same_employer`, public class attribute `subtitle_url`, public class attribute `subtitle`, public class attribute `tags`, public class attribute `title_url`, public class attribute `title`"
+    },
+    {
+      "name": "Section",
+      "file": "src/cv_builder/view.py",
+      "line": 106,
+      "reason": "class: decorated with `@dataclass`, public class attribute `id`, public class attribute `items`, public class attribute `kind`, public class attribute `title`"
+    },
+    {
+      "name": "Header",
+      "file": "src/cv_builder/view.py",
+      "line": 118,
+      "reason": "class: decorated with `@dataclass`, public class attribute `contacts`, public class attribute `label`, public class attribute `name`, public class attribute `photo`"
+    }
+  ]
+}

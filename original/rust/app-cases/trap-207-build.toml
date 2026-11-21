@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "/home/gaida/Documents/projects/personal_2/cv-forge/examples/android-hmi-architect.json", "-t", "compact", "-o", "👨‍👩‍👧 family"]
+status.code = 0
+fs.sandbox = true

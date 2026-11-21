@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "日本語", "-t", "clear"]
+status.code = 1
+fs.sandbox = true

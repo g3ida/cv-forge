@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "my-cv.json", "--max-pages", "18446744073709551616"]
+status.code = 1
+fs.sandbox = true

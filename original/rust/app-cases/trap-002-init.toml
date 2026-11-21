@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["init", "👍🏽 thumbs"]
+status.code = 0
+fs.sandbox = true

@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "", "-t", "modern", "-o", "out.pdf"]
+status.code = 1
+fs.sandbox = true

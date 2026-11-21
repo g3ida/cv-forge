@@ -1,0 +1,93 @@
+{#- Two-column CV. Every item carries data-m so the builder can measure it. -#}
+{% set muted = "#65696d" %}
+
+{% from "_shared/macros.html.j2" import link, text, tags, reference, line %}
+
+{% macro entry(e) %}
+{% if e.title %}<h3 class="entry-title">{{ link(e.title, e.title_url) }}</h3>{% endif %}
+{% if e.subtitle %}<div class="entry-subtitle">{{ link(e.subtitle, e.subtitle_url) }}</div>{% endif %}
+{% for line in e.meta %}
+<div class="meta-line">{% for m in line %}<span class="meta">{{ icon(m.icon, muted, 8.7, 2.4) }}{{ link(m.text, m.href) }}</span>{% endfor %}</div>
+{% endfor %}
+{% for p in e.paragraphs %}<p>{{ p }}</p>{% endfor %}
+{% if e.bullets %}
+<ul class="bullets">{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+{% endif %}
+{% if e.tags %}<p class="entry-tags">{{ e.tags }}</p>{% endif %}
+{% endmacro %}
+
+{% macro achievement(a) %}
+<div class="icon-row">
+  <div class="icon-cell">{{ icon(a.icon, accent, 15.4, 2) }}</div>
+  <div class="icon-body">
+    <h3 class="strong-title">{{ a.title }}</h3>
+    {% if a.summary %}<p>{{ a.summary }}</p>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro language(l) %}
+<div class="language">
+  <div class="language-text">
+    <h3 class="strong-title">{{ l.name }}</h3>
+    {% if l.fluency %}<div class="language-fluency">{{ l.fluency }}</div>{% endif %}
+  </div>
+  <div class="dots" aria-label="{{ l.rating }} of 5">{% for i in range(5) %}<span class="dot{% if i < l.rating %} dot--on{% endif %}"></span>{% endfor %}</div>
+</div>
+{% endmacro %}
+
+{% macro profiles(items) %}
+<div class="profiles">
+{% for p in items %}
+  <div class="icon-row profile">
+    <div class="icon-cell">{{ icon(p.icon, accent, 15.4, 2) }}</div>
+    <div class="icon-body">
+      <h3 class="strong-title">{{ p.network }}</h3>
+      <p>{{ link(p.text, p.href) }}</p>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endmacro %}
+
+{% set renderers = {"text": text, "entry": entry, "tags": tags, "achievement": achievement,
+                    "language": language, "profiles": profiles, "reference": reference, "line": line} %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <meta name="author" content="{{ cv.basics.name }}">
+  {% if cv.basics.label %}<meta name="description" content="{{ cv.basics.label }}">{% endif %}
+  <meta name="generator" content="cv-builder">
+</head>
+<body>
+{% for page in pages %}
+<div class="page{% if not loop.last %} page--break{% endif %}">
+  {% if page.header %}
+  <header class="header">
+    <div class="header-main">
+      <h1 class="name">{{ header.name }}</h1>
+      {% if header.label %}<div class="label">{{ header.label }}</div>{% endif %}
+      {% if header.contacts %}
+      <div class="contacts">
+        {% for c in header.contacts %}<span class="contact">{{ icon(c.icon, accent, 8.4, 2.4) }}{{ link(c.text, c.href) }}</span>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% if header.photo %}<div class="photo" style="background-image: url('{{ header.photo }}')"></div>{% endif %}
+  </header>
+  {% endif %}
+  <div class="columns" data-m="columns">
+    {% for col in column_names %}
+    <div class="col col--{{ col }}">
+      {% for chunk in page.columns[col] %}
+      {% include "_shared/section.html.j2" %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+</body>
+</html>

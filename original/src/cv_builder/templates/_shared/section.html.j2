@@ -1,0 +1,14 @@
+{# One section of one column on one page, with the data-m hooks the builder measures.
+   Expects `chunk` and `renderers` (item kind -> macro). A section that continues from the
+   previous page prints its title again unless the template sets "repeatTitles": false. #}
+      <section class="section section--{{ chunk.id }}" data-m="section:{{ chunk.id }}">
+        {% if repeat_titles or not chunk.continued %}
+        <h2 class="section-title">{{ chunk.title }}</h2>
+        {% endif %}
+        {% for idx, item in chunk.items %}
+        <div class="item item--{{ chunk.kind }}" data-m="item:{{ chunk.id }}:{{ idx }}">
+          {{ renderers[chunk.kind](item) }}
+        </div>
+        {% endfor %}
+      </section>
+{# Jinja drops the last newline of a file; this line keeps the one after </section>. #}

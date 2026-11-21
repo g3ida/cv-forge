@@ -1,0 +1,1 @@
+warning: layout.columns names ['left', 'right'] but template 'classic' has columns ['main']; its sections were moved into them

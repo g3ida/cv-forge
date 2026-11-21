@@ -1,0 +1,10 @@
+# x86-64-v3 (AVX2, BMI2, FMA): every x86-64 CPU since about 2015, so release binaries also run
+# in the server container. For a binary tuned to this machine only: RUSTFLAGS="-C target-cpu=native".
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "target-cpu=x86-64-v3"]
+
+[env]
+# mimalloc: commit arena memory on demand instead of up front. Up-front commit made every
+# process fault in ~80 MB (and the kernel compact huge pages for it): 240 builds in 24 parallel
+# processes spent 30 s in the kernel; on demand, 4 s, and 0.83 s wall instead of 2.1 s.
+CFLAGS_x86_64_unknown_linux_gnu = "-DMI_DEFAULT_ARENA_EAGER_COMMIT=0"

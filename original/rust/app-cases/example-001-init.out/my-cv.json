@@ -1,0 +1,81 @@
+{
+  "$schema": "cv.schema.json",
+  "basics": {
+    "name": "Jane Doe",
+    "label": "Backend Engineer | Distributed Systems | Go",
+    "email": "jane.doe@example.com",
+    "phone": "+1 555 0100",
+    "url": "https://janedoe.dev",
+    "summary": "Backend engineer with 6 years of experience building **reliable** distributed services. Looking for a staff role on a platform team.",
+    "location": { "city": "Berlin", "countryCode": "DE" },
+    "profiles": [
+      { "network": "LinkedIn", "username": "janedoe", "url": "https://www.linkedin.com/in/janedoe" },
+      { "network": "GitHub", "username": "janedoe", "url": "https://github.com/janedoe" }
+    ]
+  },
+  "work": [
+    {
+      "name": "Example Corp",
+      "position": "Senior Backend Engineer",
+      "location": "Berlin, Germany",
+      "url": "https://example.com",
+      "startDate": "2022-03",
+      "description": "Payments platform for online marketplaces.",
+      "highlights": [
+        "Cut p99 checkout latency from 900ms to 180ms by redesigning the ledger write path",
+        "Led the migration of 40 services to Kubernetes with zero customer-facing downtime"
+      ]
+    },
+    {
+      "name": "Startup GmbH",
+      "position": "Software Engineer",
+      "startDate": "2019-01",
+      "endDate": "2022-02",
+      "summary": "First backend hire; owned the API and data pipeline.",
+      "highlights": ["Built the event pipeline processing 2M events/day"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Technical University",
+      "studyType": "MSc",
+      "area": "Computer Science",
+      "location": "Munich, Germany",
+      "startDate": "2016",
+      "endDate": "2018",
+      "highlights": ["Thesis on consensus protocols"]
+    }
+  ],
+  "achievements": [
+    { "title": "Latency Reduction", "summary": "Made checkout 5x faster for 3M monthly users.", "icon": "zap" }
+  ],
+  "skills": [
+    { "name": "Languages", "keywords": ["Go", "Python", "SQL"] },
+    { "name": "Infrastructure", "keywords": ["Kubernetes", "Terraform", "PostgreSQL", "Kafka"] }
+  ],
+  "projects": [
+    {
+      "name": "tinyraft",
+      "startDate": "2021",
+      "endDate": "2021",
+      "url": "https://github.com/janedoe/tinyraft",
+      "description": "Educational Raft implementation in 1,500 lines of Go."
+    }
+  ],
+  "certificates": [
+    { "name": "Certified Kubernetes Administrator", "issuer": "CNCF", "date": "2023-05" }
+  ],
+  "languages": [
+    { "language": "English", "fluency": "Native" },
+    { "language": "German", "fluency": "B2" }
+  ],
+  "layout": {
+    "template": "compact",
+    "accentColor": "#1E90FF",
+    "columns": {
+      "left": ["work", "education", "profiles"],
+      "right": ["summary", "achievements", "skills", "projects", "certificates", "languages"]
+    },
+    "header": { "contacts": ["phone", "email", "url"], "profiles": ["LinkedIn"] }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "classic",
+  "label": "Classic",
+  "description": "Timeless serif layout with a centered header and ruled section headings in one parser-safe column, for finance, law, consulting, academia, the public sector and traditional employers.",
+  "readingOrder": true,
+  "pageSize": "A4",
+  "margins": {
+    "top": 48,
+    "right": 54,
+    "bottom": 48,
+    "left": 54
+  },
+  "accentColor": "#1F3A5F",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

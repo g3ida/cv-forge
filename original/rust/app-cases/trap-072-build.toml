@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "👍🏽 thumbs", "--max-pages", "2"]
+status.code = 1
+fs.sandbox = true

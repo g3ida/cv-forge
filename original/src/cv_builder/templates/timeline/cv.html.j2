@@ -1,0 +1,112 @@
+{#- Timeline CV: a left gutter with the dates, a thin line with a dot per entry, and every text
+    block on one content edge to the right of it. -#}
+{% from "_shared/macros.html.j2" import link, text, tags, reference, line %}
+
+{#- An entry is a three-column grid (gutter | rail | content). The source order is the reading
+    order of the clear template: title, subtitle, then the dates alone on their line, then the
+    location; the grid only moves the dates and location into the gutter. pypdf follows the
+    source, so it reads every role like clear does. pdftotext follows the page: it reads the
+    gutter as a block of its own before the content, so a resume parser finds each date range
+    but not the title and employer beside it ("readingOrder": false). Measured alternatives:
+    dates first in the source (pypdf then loses the employers as well), and the dates on their
+    own line above the title in the content column (parser-safe with both extractors, but there
+    is no date gutter any more). A continued piece (bullets only) keeps the line, without a dot. -#}
+{% macro entry(e) %}
+{% set meta = e.meta | sum(start=[]) %}
+{% set dates = meta | selectattr("icon", "equalto", "calendar") | list %}
+{% set places = meta | selectattr("icon", "equalto", "pin") | list %}
+{% set rest = meta | rejectattr("icon", "in", ["pin", "calendar"]) | list %}
+<div class="entry{% if e.same_employer %} entry--same-employer{% endif %}{% if e.continued %} entry--continued{% elif dates and dates[-1].text.endswith('Present') %} entry--current{% endif %}">
+<div class="entry-rail">{% if not e.continued %}<span class="entry-dot"></span>{% endif %}</div>
+{% if not e.continued %}
+<div class="entry-head">
+{% if e.title %}<h3 class="entry-title">{{ link(e.title, e.title_url) }}</h3>{% endif %}
+{% if e.subtitle %}<div class="entry-subtitle">{{ link(e.subtitle, e.subtitle_url) }}</div>{% endif %}
+</div>
+<div class="entry-when">
+{% if dates %}<div class="entry-dates">{% for m in dates %}{{ m.text | replace(" - ", " – ") }}{% if not loop.last %} | {% endif %}{% endfor %}</div>{% endif %}
+{% if places %}<div class="entry-place">{% for m in places %}{{ m.text }}{% if not loop.last %} | {% endif %}{% endfor %}</div>{% endif %}
+</div>
+{% endif %}
+<div class="entry-body">
+{% if rest %}<div class="entry-meta">{% for m in rest %}<span class="meta">{{ icon(m.icon, "#8a9098", 7.4, 2.2) }}{{ link(m.text, m.href) }}</span>{% if not loop.last %} {% endif %}{% endfor %}</div>{% endif %}
+{% for p in e.paragraphs %}<p>{{ p }}</p>{% endfor %}
+{% if e.bullets %}<ul class="bullets">{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+{% if e.tags %}<p class="entry-tags">{{ e.tags }}</p>{% endif %}
+</div>
+</div>
+{% endmacro %}
+
+{#- Rows: a label in the gutter (language, network) or an icon on the axis (achievement),
+    the text on the content edge. -#}
+{% macro achievement(a) %}
+<div class="row">
+<div class="row-icon">{{ icon(a.icon, accent, 9.5, 2) }}</div>
+<div class="row-body">
+<h3 class="strong-title">{{ a.title }}</h3>
+{% if a.summary %}<p>{{ a.summary }}</p>{% endif %}
+</div>
+</div>
+{% endmacro %}
+
+{% macro language(l) %}
+<div class="row">
+<h3 class="row-label">{{ l.name }}</h3>
+<div class="row-body">{% if l.fluency %}{{ l.fluency }}{% else %}<span class="dots" aria-label="{{ l.rating }} of 5">{% for i in range(5) %}<span class="dot{% if i < l.rating %} dot--on{% endif %}"></span>{% endfor %}</span>{% endif %}</div>
+</div>
+{% endmacro %}
+
+{% macro profiles(items) %}
+{% for p in items %}
+<div class="row">
+<h3 class="row-label">{{ p.network }}</h3>
+<div class="row-body">{{ link(p.text, p.href) }}</div>
+</div>
+{% endfor %}
+{% endmacro %}
+
+{% set renderers = {"text": text, "entry": entry, "tags": tags, "achievement": achievement,
+                    "language": language, "profiles": profiles, "reference": reference, "line": line} -%}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <meta name="author" content="{{ cv.basics.name }}">
+  {% if cv.basics.label %}
+  <meta name="description" content="{{ cv.basics.label }}">
+  {% endif %}
+  <meta name="generator" content="cv-builder">
+</head>
+<body>
+{% for page in pages %}
+<div class="page{% if not loop.last %} page--break{% endif %}">
+  {% if page.header %}
+  <header class="header{% if header.photo %} header--photo{% endif %}">
+    <div class="header-text">
+      <h1 class="name">{{ header.name }}</h1>
+      {% if header.label %}
+      <p class="label">{{ header.label }}</p>
+      {% endif %}
+      {% if header.contacts %}
+      <p class="contacts">{% for c in header.contacts %}<span class="contact">{{ link(c.text, c.href) }}{% if not loop.last %}<span class="sep"> ·</span>{% endif %}</span>{% if not loop.last %} {% endif %}{% endfor %}</p>
+      {% endif %}
+    </div>
+    {% if header.photo %}
+    <div class="photo" style="background-image: url('{{ header.photo }}')"></div>
+    {% endif %}
+  </header>
+  {% endif %}
+  <div class="columns" data-m="columns">
+    {% for col in column_names %}
+    <div class="col col--{{ col }}">
+      {% for chunk in page.columns[col] %}
+      {% include "_shared/section.html.j2" %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+</body>
+</html>

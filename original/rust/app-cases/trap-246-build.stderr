@@ -1,0 +1,1 @@
+warning: layout.columns names ['left', 'right'] but template 'sidebar' has columns ['side', 'main']; its sections were moved into them

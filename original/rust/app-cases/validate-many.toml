@@ -1,0 +1,5 @@
+bin.name = "cv-builder"
+args = ["validate", "many.json"]
+status.code = 1
+fs.sandbox = true
+fs.base = "validate-many.in"

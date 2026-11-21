@@ -1,0 +1,305 @@
+/* sidebar template: a header across the page, then a side column on a tinted band and the main
+ * column beside it. Built for people, not for resume parsers (the two columns interleave when
+ * the text is extracted).
+ *
+ * Horizontal geometry (pt, from the paper's left edge; the left margin is in template.json):
+ *
+ *   0 ─ 26 margin ─ 188 side column (162) ─ 214 band edge ─ 238 main column ─ right margin 34
+ *
+ * The band is the page background, so it runs from the top to the bottom edge of every page.
+ * WeasyPrint positions a page background inside the page margins and tiles it, and it drops a
+ * gradient with two-position colour stops; so the band is a one-colour image 214pt wide, moved
+ * left by the 26pt margin and repeated only vertically.
+ *
+ * Space inside an .item is made with padding, never margin: the builder measures the border box
+ * of every item, and a margin would collapse out of it.
+ */
+
+@page {
+  background: linear-gradient(#eff1f4, #eff1f4) -26pt 0 / 214pt 100% repeat-y;
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: "Inter", sans-serif;
+    font-size: 10pt;
+    color: #8a9099;
+  }
+}
+/* No number on the first page, so a one-page CV has none at all. */
+@page :first {
+  @bottom-right { content: none; }
+}
+
+:root {
+  --accent: #2b5c8a;
+  --text: #33383f;
+  --heading: #16191d;
+  --muted: #6c727b;
+  --rule: #d9dde2;
+  --band-rule: #d3d8de;
+  --chip-border: #dadee4;
+  --seg-off: #d6dae0;
+}
+
+html {
+  font-family: "Inter", sans-serif;
+  font-size: 10pt;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+body { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: inherit; font-size: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+svg.icon { flex: none; }
+
+.page--break { break-after: page; }
+
+/* ----------------------------------------------------------------- header */
+
+.header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 22pt;
+}
+.header-side {
+  flex: none;
+  width: 162pt;
+  margin-right: 50pt;
+  display: flex;
+  justify-content: center;
+}
+.header-main { flex: 1; min-width: 0; }
+
+/* A white ring around the photo: a padded circle, since a border on the photo itself comes out
+   slightly uneven where WeasyPrint clips the image. */
+.photo-ring { padding: 3pt; border-radius: 50%; background: #ffffff; }
+.photo {
+  width: 102pt;
+  height: 102pt;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+/* Without a photo, the initials on a white disc hold the photo's place at the top of the band. */
+.monogram {
+  width: 80pt;
+  height: 80pt;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--accent);
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 29pt;
+  line-height: 80pt;
+  letter-spacing: 1.5pt;
+  text-align: center;
+}
+
+.name {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 23pt;
+  line-height: 1.12;
+  letter-spacing: -0.2pt;
+  color: var(--heading);
+}
+.label {
+  padding-top: 4pt;
+  font-weight: 500;
+  font-size: 11.5pt;
+  line-height: 1.32;
+  color: var(--accent);
+}
+.contacts {
+  padding-top: 8pt;
+  font-size: 10pt;
+  line-height: 1.75;
+  color: var(--text);
+}
+.contact { display: inline-block; margin-right: 10pt; white-space: nowrap; }
+.contact svg { vertical-align: -1.5pt; margin-right: 3.5pt; }
+
+/* ---------------------------------------------------------------- columns */
+
+.columns { display: flex; align-items: flex-start; }
+.col--side { flex: none; width: 162pt; margin-right: 50pt; font-size: 10pt; }
+.col--main { flex: 1; min-width: 0; }
+
+.section { margin-top: 17pt; }
+.col > .section:first-child { margin-top: 0; }
+
+/* Title: small spaced capitals with a hairline running to the column's edge. */
+.section-title {
+  display: flex;
+  align-items: center;
+  padding-bottom: 7pt;
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 11pt;
+  line-height: 13pt;
+  letter-spacing: 1.4pt;
+  text-transform: uppercase;
+  color: var(--heading);
+}
+.section-title::after {
+  content: "";
+  flex: 1;
+  margin-left: 8pt;
+  border-top: 0.75pt solid var(--rule);
+}
+.col--side .section-title { font-size: 10pt; letter-spacing: 1.3pt; }
+.col--side .section-title::after { border-top-color: var(--band-rule); }
+
+.item { position: relative; break-inside: avoid; }
+.item + .item { padding-top: 9pt; }
+.col--side .item + .item { padding-top: 7pt; }
+/* Entries carry their own gap, so the pieces of an entry cut up for pagination stay together. */
+.item--entry + .item--entry,
+.col--side .item--entry + .item--entry { padding-top: 0; }
+.entry { padding-top: 9pt; }
+.col--side .entry { padding-top: 8pt; }
+.section-title + .item > .entry,
+.entry--continued { padding-top: 0; }
+
+.strong-title { font-weight: 600; color: var(--heading); }
+
+/* ------------------------------------------------------------- summary */
+
+.item--text p + p { padding-top: 4pt; }
+
+/* ---------------------------------------------------------------- entries */
+
+.entry-row { display: flex; align-items: baseline; justify-content: space-between; }
+.entry-row .entry-title,
+.entry-row .entry-subtitle { flex: 1; min-width: 0; }
+.entry-aside {
+  flex: none;
+  padding-left: 10pt;
+  font-size: 10pt;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.entry-title {
+  font-weight: 600;
+  font-size: 11pt;
+  line-height: 1.3;
+  color: var(--heading);
+}
+.entry-subtitle {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 1.35;
+  color: var(--accent);
+}
+.entry-row--sub { padding-top: 0.5pt; }
+
+.meta-line { padding-top: 1pt; font-size: 10pt; color: var(--muted); }
+.meta { display: inline-block; margin-right: 9pt; white-space: nowrap; }
+.meta:last-child { margin-right: 0; }
+.meta svg { vertical-align: -1.3pt; margin-right: 3pt; }
+
+.entry-text { padding-top: 3pt; }
+.entry-tags { padding-top: 3pt; font-size: 10pt; color: var(--muted); }
+
+.bullets { padding-top: 2.5pt; }
+.entry--continued .bullets { padding-top: 0; }
+.bullets li { position: relative; padding: 1pt 0 0 10pt; }
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: 1.5pt;
+  top: 5.6pt;
+  width: 3pt;
+  height: 3pt;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* When a page starts in the middle of an entry, "continued" sits at the end of the repeated
+   section title (12pt line + 7pt padding above the item), over its hairline. It is positioned,
+   so it takes no height of its own; the background is the column's (white, or the band's tint). */
+.continued { display: none; }
+.section-title + .item .continued {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: -19pt;
+  padding-left: 6pt;
+  font-size: 10pt;
+  line-height: 12pt;
+  color: var(--muted);
+  background: #ffffff;
+}
+.col--side .section-title + .item .continued { background: #eff1f4; }
+
+/* Side column entries (certificates, awards): stacked and a step smaller. */
+.col--side .entry-title { font-size: 10pt; line-height: 1.32; }
+.col--side .entry-subtitle { font-size: 10pt; line-height: 1.35; }
+.col--side .meta-line { padding-top: 1.5pt; font-size: 10pt; }
+
+/* ------------------------------------------------------ skills (chips) */
+
+.tags-name {
+  font-weight: 600;
+  font-size: 10pt;
+  line-height: 1.3;
+  color: var(--heading);
+}
+.tags-level { font-weight: 500; color: var(--muted); }
+.chips { padding-top: 3.5pt; font-size: 0; line-height: 0; }
+.chip {
+  display: inline-block;
+  margin: 0 2.6pt 2.6pt 0;
+  padding: 1.3pt 4.5pt 1.5pt;
+  border: 0.6pt solid var(--chip-border);
+  border-radius: 2.5pt;
+  background: #ffffff;
+  font-size: 10pt;
+  line-height: 1.2;
+  color: var(--text);
+}
+/* The chips' bottom margin closes the group; take it back from the gap to the next one. */
+.item--tags + .item--tags { padding-top: 4pt; }
+
+/* ----------------------------------------------------------- languages */
+
+.item--language + .item--language { padding-top: 6pt; }
+.language-head { display: flex; align-items: baseline; justify-content: space-between; }
+.language-fluency { font-size: 10pt; color: var(--muted); }
+.rating { display: flex; padding-top: 3pt; }
+.seg {
+  flex: 1;
+  height: 3pt;
+  margin-right: 2.5pt;
+  border-radius: 1.5pt;
+  background: var(--seg-off);
+}
+.seg:last-child { margin-right: 0; }
+.seg--on { background: var(--accent); }
+
+/* ------------------------------------------- achievements, profiles */
+
+.icon-row { display: flex; align-items: flex-start; }
+.icon-cell { flex: none; width: 17pt; padding-top: 1pt; }
+.icon-body { flex: 1; min-width: 0; }
+.achievement-text { padding-top: 1.5pt; }
+.profile + .profile { padding-top: 5pt; }
+.profile-link { font-size: 10pt; color: var(--muted); }
+
+/* ----------------------------------------------------------- references */
+
+.reference-text {
+  font-family: "Noto Serif", serif;
+  font-style: italic;
+  font-size: 10pt;
+}
+.reference-name { padding-top: 2pt; font-weight: 600; color: var(--heading); }
+
+/* certificates and awards, one line each: "Name, Issuer, 2026" */
+.line-title { font-weight: 600; color: var(--heading); }
+.item--line + .item--line { padding-top: 4pt; }
+.line-summary { padding-top: 1pt; }

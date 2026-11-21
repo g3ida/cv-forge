@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "my-cv.json", "--html", "debug.html"]
+status.code = 1
+fs.sandbox = true

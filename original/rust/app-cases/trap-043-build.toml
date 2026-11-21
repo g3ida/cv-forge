@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "my-cv.json", "-o", "日本語", "--accent", "#0B7A75", "--page-size", "Letter"]
+status.code = 1
+fs.sandbox = true

@@ -1,0 +1,30 @@
+[package]
+name = "cvforge"
+description = "Fast PDF CVs from JSON Resume files: validation, layout and Typst typesetting"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+typst.workspace = true
+typst-pdf.workspace = true
+typst-utils.workspace = true
+typst-layout.workspace = true
+typst-render.workspace = true
+png.workspace = true
+caseless.workspace = true
+base64.workspace = true
+comemo.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+regex.workspace = true
+rayon.workspace = true
+
+[dev-dependencies]
+mimalloc.workspace = true
+
+[lints]
+workspace = true

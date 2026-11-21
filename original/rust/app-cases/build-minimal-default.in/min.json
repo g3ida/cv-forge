@@ -1,0 +1,40 @@
+{
+  "basics": {
+    "name": "Ada Lovelace",
+    "label": "Analyst",
+    "email": "ada@example.org",
+    "summary": "First programmer.\n\nWrote **notes** on the [Engine](https://example.org/engine)."
+  },
+  "work": [
+    {
+      "name": "Engine Co",
+      "position": "Analyst",
+      "startDate": "1842",
+      "highlights": [
+        "Wrote C++ and **bold** text",
+        "Second point"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "name": "Math",
+      "level": "Expert",
+      "keywords": [
+        "Analysis",
+        "Algebra"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "fluency": "Native"
+    },
+    {
+      "language": "French",
+      "fluency": "B1"
+    }
+  ],
+  "layout": {}
+}

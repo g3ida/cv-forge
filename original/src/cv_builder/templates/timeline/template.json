@@ -1,0 +1,45 @@
+{
+  "name": "timeline",
+  "label": "Timeline",
+  "description": "A calm career timeline with the dates in a left gutter, joined by a thin line with a dot per role and all text on one strong edge; made for people to read, since resume parsers read the dates apart from their roles.",
+  "readingOrder": false,
+  "pageSize": "A4",
+  "margins": {
+    "top": 38,
+    "right": 40,
+    "bottom": 36,
+    "left": 40
+  },
+  "accentColor": "#2D5B86",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "volunteer",
+      "projects",
+      "skills",
+      "achievements",
+      "certificates",
+      "awards",
+      "publications",
+      "languages",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

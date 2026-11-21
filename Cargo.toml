@@ -1,0 +1,72 @@
+[workspace]
+resolver = "3"
+members = ["crates/cvforge", "crates/cvforge-cli", "crates/cvforge-py"]
+# The Python module links against libpython only when built by maturin.
+default-members = ["crates/cvforge", "crates/cvforge-cli"]
+# Verification crates rust-anything generates (PyO3 modules for recorded cases), built on their own.
+exclude = ["ports", "original"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.92"
+license = "MIT"
+publish = false
+
+[workspace.dependencies]
+cvforge = { path = "crates/cvforge" }
+typst = "0.15.1"
+typst-pdf = "0.15.1"
+typst-render = "0.15.1"
+png = "0.18"
+typst-utils = "0.15.1"
+typst-layout = "0.15.1"
+caseless = "0.2"
+base64 = "0.22"
+comemo = "0.5.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+indexmap = { version = "2", features = ["serde"] }
+regex = "1"
+clap = { version = "4", features = ["derive"] }
+mimalloc = { version = "0.1", default-features = false }
+rayon = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+unwrap_used = "warn"
+
+# Everything for speed: one codegen unit, whole-program LTO, no unwinding tables.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+incremental = false
+
+# Benchmarks and profiling: release speed, with symbols for perf and flame graphs.
+[profile.profiling]
+inherits = "release"
+strip = "none"
+debug = "line-tables-only"
+
+# Typst is very slow unoptimized; keep dependencies fast in tests and debug builds.
+[profile.dev.package."*"]
+opt-level = 2
+
+# The Python module: release speed, but a Rust panic must become a Python exception, not abort
+# the interpreter (and auto-apply's worker with it).
+[profile.release-py]
+inherits = "release"
+panic = "unwind"
+
+# Quick optimized builds while iterating (thin local LTO, parallel codegen); numbers a bit
+# below `release`.
+[profile.quick]
+inherits = "release"
+lto = "off"
+codegen-units = 16
+incremental = true

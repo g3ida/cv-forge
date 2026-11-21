@@ -1,0 +1,10 @@
+{
+  "schema": "rust-anything/app-cases@1",
+  "name": "cv-builder",
+  "run": [
+    "python3",
+    "-I",
+    "../tools/cvcheck.py"
+  ],
+  "timeout_secs": 120
+}

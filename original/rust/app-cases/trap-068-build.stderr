@@ -1,0 +1,5 @@
+usage: cv-builder build [-h] [-o OUTPUT] [-t TEMPLATE] [--accent ACCENT]
+                        [--page-size {A4,Letter}] [--html HTML]
+                        [--max-pages MAX_PAGES] [-q]
+                        cv
+cv-builder build: error: argument --page-size: invalid choice: 'ılık ırmak' (choose from A4, Letter)

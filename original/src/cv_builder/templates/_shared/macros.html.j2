@@ -1,0 +1,23 @@
+{#- Item macros whose markup is the same in every bundled template; each template styles them itself.
+    Usage: {% from "_shared/macros.html.j2" import link, text, tags, reference, line %} -#}
+{% macro link(text, url) %}{% if url %}<a href="{{ url }}">{{ text }}</a>{% else %}{{ text }}{% endif %}{% endmacro %}
+
+{% macro text(paras) %}
+{% for p in paras %}<p>{{ p }}</p>{% endfor %}
+{% endmacro %}
+
+{% macro tags(s) %}
+<h3 class="tags-name">{{ s.name }}{% if s.level %} <span class="tags-level">· {{ s.level }}</span>{% endif %}</h3>
+{% if s.text %}<p class="tags-text">{{ s.text }}</p>{% endif %}
+{% endmacro %}
+
+{#- A certificate or award on one line: "Name, Issuer, 2026", the name bold and linked. -#}
+{% macro line(l) %}
+<p class="line-item"><span class="line-title">{{ link(l.title, l.url) }}</span>{% if l.detail %}, {{ l.detail }}{% endif %}</p>
+{% if l.summary %}<p class="line-summary">{{ l.summary }}</p>{% endif %}
+{% endmacro %}
+
+{% macro reference(r) %}
+{% for p in r.text %}<p class="reference-text">“{{ p }}”</p>{% endfor %}
+<div class="reference-name">{{ r.name }}</div>
+{% endmacro %}

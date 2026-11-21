@@ -1,0 +1,351 @@
+{
+  "schema": "rust-anything/analyze@1",
+  "language": "python",
+  "summary": {
+    "packages": 1,
+    "source_files": 10,
+    "test_files": 7,
+    "ui_files": 0,
+    "loc": 1480,
+    "units": 2,
+    "ready": 0,
+    "caution": 2,
+    "blocked": 0,
+    "keep": 0,
+    "parse_errors": 0
+  },
+  "packages": [
+    {
+      "name": "cv-builder",
+      "dir": "",
+      "order": 1,
+      "runtime": "portable",
+      "workspace_deps": [],
+      "test_files": 7,
+      "units": [
+        "scripts/",
+        "src/cv_builder/"
+      ]
+    }
+  ],
+  "units": [
+    {
+      "id": "scripts/",
+      "package": "cv-builder",
+      "files": [
+        "scripts/build_fonts.py"
+      ],
+      "loc": 30,
+      "wave": 0,
+      "readiness": 93,
+      "status": "caution",
+      "bridge": "pyo3",
+      "platforms": [],
+      "risks": [
+        {
+          "risk": "string-offsets",
+          "severity": "high",
+          "count": 1,
+          "samples": [
+            "scripts/build_fonts.py:25"
+          ]
+        },
+        {
+          "risk": "division-semantics",
+          "severity": "medium",
+          "count": 1,
+          "samples": [
+            "scripts/build_fonts.py:35"
+          ]
+        }
+      ],
+      "internal_deps": [],
+      "workspace_deps": [],
+      "external_deps": [
+        "fonttools"
+      ],
+      "direct_tests": 0,
+      "fan_in": 0,
+      "density": 10.0,
+      "priority": 78,
+      "exports": 1,
+      "bridgeable": 0,
+      "notes": [
+        "Every export is JS-shaped (functions, plugin objects, iterators): porting the logic means adding a data-only function, an API change.",
+        "1 PyPI dependencies not in the crate table: check them by hand.",
+        "Leaf: imports no other unit."
+      ]
+    },
+    {
+      "id": "src/cv_builder/",
+      "package": "cv-builder",
+      "files": [
+        "src/cv_builder/__init__.py",
+        "src/cv_builder/__main__.py",
+        "src/cv_builder/cli.py",
+        "src/cv_builder/dates.py",
+        "src/cv_builder/icons.py",
+        "src/cv_builder/model.py",
+        "src/cv_builder/paginate.py",
+        "src/cv_builder/render.py",
+        "src/cv_builder/view.py"
+      ],
+      "loc": 1450,
+      "wave": 0,
+      "readiness": 2,
+      "status": "caution",
+      "bridge": "pyo3",
+      "platforms": [],
+      "risks": [
+        {
+          "risk": "unordered-iteration",
+          "severity": "high",
+          "count": 11,
+          "samples": [
+            "src/cv_builder/model.py:342",
+            "src/cv_builder/model.py:384",
+            "src/cv_builder/render.py:47"
+          ]
+        },
+        {
+          "risk": "string-offsets",
+          "severity": "high",
+          "count": 9,
+          "samples": [
+            "src/cv_builder/model.py:94",
+            "src/cv_builder/paginate.py:69",
+            "src/cv_builder/render.py:329"
+          ]
+        },
+        {
+          "risk": "regex-syntax",
+          "severity": "high",
+          "count": 1,
+          "samples": [
+            "src/cv_builder/render.py:445"
+          ]
+        },
+        {
+          "risk": "dynamic-regex",
+          "severity": "high",
+          "count": 1,
+          "samples": [
+            "src/cv_builder/model.py:61"
+          ]
+        },
+        {
+          "risk": "class-inheritance",
+          "severity": "medium",
+          "count": 24,
+          "samples": [
+            "src/cv_builder/model.py:116",
+            "src/cv_builder/model.py:127",
+            "src/cv_builder/model.py:142"
+          ]
+        },
+        {
+          "risk": "dynamic-typing",
+          "severity": "medium",
+          "count": 20,
+          "samples": [
+            "src/cv_builder/cli.py:25",
+            "src/cv_builder/model.py:71",
+            "src/cv_builder/model.py:122"
+          ]
+        },
+        {
+          "risk": "number-semantics",
+          "severity": "low",
+          "count": 110,
+          "samples": [
+            "src/cv_builder/dates.py:8",
+            "src/cv_builder/dates.py:19",
+            "src/cv_builder/dates.py:20"
+          ]
+        },
+        {
+          "risk": "exceptions",
+          "severity": "low",
+          "count": 18,
+          "samples": [
+            "src/cv_builder/cli.py:36",
+            "src/cv_builder/cli.py:39",
+            "src/cv_builder/cli.py:41"
+          ]
+        }
+      ],
+      "internal_deps": [],
+      "workspace_deps": [],
+      "external_deps": [
+        "jinja2",
+        "markupsafe",
+        "pydantic",
+        "weasyprint"
+      ],
+      "direct_tests": 7,
+      "fan_in": 0,
+      "density": 6.2,
+      "priority": 34,
+      "exports": 64,
+      "bridgeable": 24,
+      "notes": [
+        "2 PyPI dependencies not in the crate table: check them by hand.",
+        "Leaf: imports no other unit.",
+        "7 test files import it directly."
+      ]
+    }
+  ],
+  "start_here": [
+    "src/cv_builder/"
+  ],
+  "dependencies": [
+    {
+      "name": "fonttools",
+      "used_by": 1,
+      "crates": null,
+      "fit": "unknown",
+      "note": ""
+    },
+    {
+      "name": "markupsafe",
+      "used_by": 1,
+      "crates": null,
+      "fit": "unknown",
+      "note": ""
+    },
+    {
+      "name": "weasyprint",
+      "used_by": 1,
+      "crates": null,
+      "fit": "unknown",
+      "note": ""
+    },
+    {
+      "name": "pydantic",
+      "used_by": 1,
+      "crates": "serde, garde",
+      "fit": "partial",
+      "note": "Validation errors will differ."
+    },
+    {
+      "name": "jinja2",
+      "used_by": 1,
+      "crates": "minijinja",
+      "fit": "good",
+      "note": "Same template language, by Jinja's author."
+    }
+  ],
+  "whole_app": {
+    "shape": "cli",
+    "entry_points": [
+      {
+        "kind": "cli",
+        "path": "cv_builder.cli:main",
+        "name": "cv-builder",
+        "evidence": "pyproject.toml scripts"
+      },
+      {
+        "kind": "cli",
+        "path": "scripts/build_fonts.py",
+        "evidence": "`if __name__ == \"__main__\"` at scripts/build_fonts.py:38"
+      },
+      {
+        "kind": "cli",
+        "path": "src/cv_builder/cli.py",
+        "evidence": "`if __name__ == \"__main__\"` at src/cv_builder/cli.py:177"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "fonttools",
+        "declared": false,
+        "used_by": 1,
+        "crates": null,
+        "fit": "unknown",
+        "note": ""
+      },
+      {
+        "name": "markupsafe",
+        "declared": false,
+        "used_by": 1,
+        "crates": null,
+        "fit": "unknown",
+        "note": ""
+      },
+      {
+        "name": "weasyprint",
+        "declared": true,
+        "used_by": 1,
+        "crates": null,
+        "fit": "unknown",
+        "note": ""
+      },
+      {
+        "name": "pydantic",
+        "declared": true,
+        "used_by": 1,
+        "crates": "serde, garde",
+        "fit": "partial",
+        "note": "Validation errors will differ."
+      },
+      {
+        "name": "jinja2",
+        "declared": true,
+        "used_by": 1,
+        "crates": "minijinja",
+        "fit": "good",
+        "note": "Same template language, by Jinja's author."
+      }
+    ],
+    "pieces": [
+      {
+        "wave": 0,
+        "units": [
+          "scripts/"
+        ],
+        "loc": 30,
+        "tangled": false
+      },
+      {
+        "wave": 0,
+        "units": [
+          "src/cv_builder/"
+        ],
+        "loc": 1450,
+        "tangled": false
+      }
+    ],
+    "decisions": [
+      {
+        "id": "D1",
+        "topic": "shape",
+        "question": "The app is a cli, entered through cv-builder (cv_builder.cli:main), scripts/build_fonts.py, src/cv_builder/cli.py. Port every entry point, in that shape?",
+        "recommendation": "Yes: a clap front door (`app front-door`) takes every command over first"
+      },
+      {
+        "id": "D2",
+        "topic": "dependency fonttools",
+        "question": "Which crate replaces fonttools (used by 1 unit)?",
+        "recommendation": "Research it against primary sources into rust/research/fonttools.md before porting what uses it"
+      },
+      {
+        "id": "D3",
+        "topic": "dependency markupsafe",
+        "question": "Which crate replaces markupsafe (used by 1 unit)?",
+        "recommendation": "Research it against primary sources into rust/research/markupsafe.md before porting what uses it"
+      },
+      {
+        "id": "D4",
+        "topic": "dependency weasyprint",
+        "question": "Which crate replaces weasyprint (used by 1 unit)?",
+        "recommendation": "Research it against primary sources into rust/research/weasyprint.md before porting what uses it"
+      },
+      {
+        "id": "D5",
+        "topic": "dependency pydantic",
+        "question": "pydantic maps to serde, garde only in part (used by 1 unit; Validation errors will differ). Use it?",
+        "recommendation": "Use serde, garde, and record cases for the behavior it does not cover"
+      }
+    ]
+  }
+}

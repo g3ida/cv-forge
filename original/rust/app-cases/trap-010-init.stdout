@@ -1,0 +1,3 @@
+wrote a b
+wrote cv.schema.json
+edit a b, then run: cv-builder build a b

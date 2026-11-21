@@ -1,0 +1,157 @@
+{#- Sidebar CV: a header across the page, then a narrow side column on a tinted band (painted by
+    the @page background in style.css, so it runs the full height of every page) and the main
+    column beside it. Entries are laid out per column: in the main column the dates and the place
+    sit on the right of the title and the employer, in the narrow side column everything stacks. -#}
+{% set muted = "#7a8089" %}
+
+{% from "_shared/macros.html.j2" import link, text, reference, line %}
+
+{#- Links read better without the scheme ("github.com/user/repo"). -#}
+{% macro meta_item(m, color) %}
+{%- set label = m.text | replace("https://", "") | replace("http://", "") if m.icon == "link" else m.text -%}
+<span class="meta">{{ icon(m.icon, color, 8, 2.2) }}{{ link(label, m.href) }}</span>
+{%- endmacro %}
+
+{% macro entry_body(e) %}
+{% for p in e.paragraphs %}<p class="entry-text">{{ p }}</p>{% endfor %}
+{% if e.bullets %}
+<ul class="bullets">{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+{% endif %}
+{% if e.tags %}<p class="entry-tags">{{ e.tags }}</p>{% endif %}
+{% endmacro %}
+
+{#- Main column: title | dates, then employer | place, then any other meta (score, link). -#}
+{% macro entry_main(e) %}
+{% set meta = e.meta | sum(start=[]) %}
+{% set when = meta | selectattr("icon", "equalto", "calendar") | list %}
+{% set where = meta | selectattr("icon", "equalto", "pin") | list %}
+{% set other = meta | rejectattr("icon", "in", ["calendar", "pin"]) | list %}
+<div class="entry{% if e.continued %} entry--continued{% endif %}{% if e.same_employer %} entry--same-employer{% endif %}">
+{% if e.continued %}<span class="continued">continued</span>{% endif %}
+{% if e.title or when %}
+<div class="entry-row">
+  <h3 class="entry-title">{% if e.title %}{{ link(e.title, e.title_url) }}{% endif %}</h3>
+  {% if when %}<div class="entry-aside">{% for m in when %}{{ meta_item(m, muted) }}{% endfor %}</div>{% endif %}
+</div>
+{% endif %}
+{% if e.subtitle or where %}
+<div class="entry-row entry-row--sub">
+  <div class="entry-subtitle">{% if e.subtitle %}{{ link(e.subtitle, e.subtitle_url) }}{% endif %}</div>
+  {% if where %}<div class="entry-aside">{% for m in where %}{{ meta_item(m, muted) }}{% endfor %}</div>{% endif %}
+</div>
+{% endif %}
+{% if other %}<div class="meta-line">{% for m in other %}{{ meta_item(m, muted) }}{% endfor %}</div>{% endif %}
+{{ entry_body(e) }}
+</div>
+{% endmacro %}
+
+{#- Side column: title, issuer, then the meta lines, all stacked. -#}
+{% macro entry_side(e) %}
+<div class="entry{% if e.continued %} entry--continued{% endif %}{% if e.same_employer %} entry--same-employer{% endif %}">
+{% if e.continued %}<span class="continued">continued</span>{% endif %}
+{% if e.title %}<h3 class="entry-title">{{ link(e.title, e.title_url) }}</h3>{% endif %}
+{% if e.subtitle %}<div class="entry-subtitle">{{ link(e.subtitle, e.subtitle_url) }}</div>{% endif %}
+{% for line in e.meta %}<div class="meta-line">{% for m in line %}{{ meta_item(m, muted) }}{% endfor %}</div>{% endfor %}
+{{ entry_body(e) }}
+</div>
+{% endmacro %}
+
+{#- Skills and interests as keyword chips. The item only carries the keywords joined with ", ";
+    the CV's own list is used when the group is found by name, so a keyword that contains a
+    comma stays one chip. -#}
+{% macro tags(s) %}
+<h3 class="tags-name">{{ s.name }}{% if s.level %} <span class="tags-level">· {{ s.level }}</span>{% endif %}</h3>
+{% set found = (cv.skills | selectattr("name", "equalto", s.name) | list)
+             + (cv.interests | selectattr("name", "equalto", s.name) | list) %}
+{% set words = found[0].keywords if found and found[0].keywords else (s.text.split(", ") if s.text else []) %}
+{% if words %}<div class="chips">{% for k in words %}<span class="chip">{{ k }}</span> {% endfor %}</div>{% endif %}
+{% endmacro %}
+
+{% macro achievement(a) %}
+<div class="icon-row">
+  <div class="icon-cell">{{ icon(a.icon, accent, 11, 2) }}</div>
+  <div class="icon-body">
+    <h3 class="strong-title">{{ a.title }}</h3>
+    {% if a.summary %}<p class="achievement-text">{{ a.summary }}</p>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro language(l) %}
+<div class="language">
+  <div class="language-head">
+    <h3 class="strong-title">{{ l.name }}</h3>
+    {% if l.fluency %}<span class="language-fluency">{{ l.fluency }}</span>{% endif %}
+  </div>
+  {% if l.rating %}
+  <div class="rating" aria-label="{{ l.rating }} of 5">{% for i in range(5) %}<span class="seg{% if i < l.rating %} seg--on{% endif %}"></span>{% endfor %}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro profiles(items) %}
+{% for p in items %}
+<div class="icon-row profile">
+  <div class="icon-cell">{{ icon(p.icon, accent, 11, 2) }}</div>
+  <div class="icon-body">
+    <h3 class="strong-title">{{ p.network }}</h3>
+    <p class="profile-link">{{ link(p.text, p.href) }}</p>
+  </div>
+</div>
+{% endfor %}
+{% endmacro %}
+
+{% set base = {"text": text, "tags": tags, "achievement": achievement, "language": language,
+               "profiles": profiles, "reference": reference, "line": line} %}
+{% set main_renderers = dict(base, entry=entry_main) %}
+{% set side_renderers = dict(base, entry=entry_side) %}
+{% set renderers = main_renderers %}
+{% set names = header.name.split() %}
+{#- Without a photo, the initials of the first and last name take its place. -#}
+{% set initials = ((names[0][:1] if names else "") ~ (names[-1][:1] if names | length > 1 else "")) | upper %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <meta name="author" content="{{ cv.basics.name }}">
+  {% if cv.basics.label %}<meta name="description" content="{{ cv.basics.label }}">{% endif %}
+  <meta name="generator" content="cv-builder">
+</head>
+<body>
+{% for page in pages %}
+<div class="page{% if not loop.last %} page--break{% endif %}">
+  {% if page.header %}
+  <header class="header">
+    <div class="header-side">
+      {% if header.photo %}
+      <div class="photo-ring"><div class="photo" style="background-image: url('{{ header.photo }}')"></div></div>
+      {% elif initials %}
+      <div class="monogram" aria-hidden="true">{{ initials }}</div>
+      {% endif %}
+    </div>
+    <div class="header-main">
+      <h1 class="name">{{ header.name }}</h1>
+      {% if header.label %}<div class="label">{{ header.label }}</div>{% endif %}
+      {% if header.contacts %}
+      <div class="contacts">
+        {% for c in header.contacts %}<span class="contact">{{ icon(c.icon, accent, 8.4, 2.3) }}{{ link(c.text, c.href) }}</span> {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </header>
+  {% endif %}
+  <div class="columns" data-m="columns">
+    {% for col in column_names %}
+    {% set renderers = side_renderers if col == "side" else main_renderers %}
+    <div class="col col--{{ col }}">
+      {% for chunk in page.columns[col] %}
+      {% include "_shared/section.html.j2" %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+</body>
+</html>

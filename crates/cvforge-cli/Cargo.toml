@@ -1,0 +1,21 @@
+[package]
+name = "cvforge-cli"
+description = "cv-forge: build PDF CVs from JSON (a fast Rust port of cv-builder)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "cv-forge"
+path = "src/main.rs"
+
+[dependencies]
+cvforge.workspace = true
+clap.workspace = true
+serde_json.workspace = true
+mimalloc.workspace = true
+
+[lints]
+workspace = true

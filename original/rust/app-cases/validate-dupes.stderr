@@ -1,0 +1,2 @@
+dupes.json: 1 problem(s)
+  layout: section 'work' is listed more than once in layout.columns

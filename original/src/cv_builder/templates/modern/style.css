@@ -1,0 +1,181 @@
+/* modern template: one column under a full-width colour band, built to extract in reading order.
+ *
+ * The rules of clear/style.css apply: no floats, tables, positioned boxes (even position:
+ * relative), multi-column or flex `order`, since they change the order in which text lands in
+ * the PDF; no letter-spacing, text-transform, hyphenation or ligatures, since they change the
+ * characters a parser gets back. Space inside an .item is made with padding, never margin.
+ *
+ * The band reaches the paper edges through negative margins equal to the page margins in
+ * template.json, which the builder provides as --margin-top/right/left. The builder measures the header
+ * from the top of the page area to the top of the columns, so the part pulled up into the top
+ * margin is subtracted and page 1 is filled exactly.
+ */
+
+:root {
+  --accent: #1f4e8c;
+  --text: #2c3038;
+  --heading: #111419;
+  --muted: #5c636e;
+  --faint: #a3a9b2;
+  --rule: #dde1e6;
+}
+
+html {
+  font-family: "Inter", sans-serif;
+  font-size: 10pt;
+  line-height: 1.37;
+  color: var(--text);
+  font-variant-ligatures: none;
+  hyphens: manual;
+}
+
+body { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: inherit; font-size: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+.page--break { break-after: page; }
+
+/* ----------------------------------------------------------------- header */
+
+.header {
+  margin: calc(-1 * var(--margin-top)) calc(-1 * var(--margin-right)) 16pt calc(-1 * var(--margin-left));
+}
+
+.band {
+  display: flex;
+  align-items: center;
+  padding: 24pt var(--margin-right) 21pt var(--margin-left);
+  background-color: var(--accent);
+  color: #ffffff;
+}
+.band-text { flex: 1; min-width: 0; }
+.header--photo .band-text { padding-right: 18pt; }
+
+.name {
+  font-weight: 700;
+  font-size: 28pt;
+  line-height: 1.15;
+  color: #ffffff;
+}
+/* Keep this gap under the name: pypdf starts a new line only when the next baseline is more
+   than 0.8 x the font size of the line above further down (here about 23pt against 20pt);
+   with less, it glues the name to the headline. */
+.label {
+  padding-top: 6pt;
+  font-size: 13pt;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* The photo is a background image, so it adds no text. It sits after the header text in the
+   source and to its right on the page. */
+.photo {
+  flex: none;
+  width: 60pt;
+  height: 60pt;
+  border: 2pt solid #ffffff;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Contacts on a light tint of the accent under the band (the gradient is a white veil over
+   the accent colour). */
+.strip {
+  padding: 7pt var(--margin-right) 7pt var(--margin-left);
+  background-color: var(--accent);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92));
+}
+.contacts { font-size: 10pt; line-height: 1.5; color: var(--text); }
+.contact { white-space: nowrap; }
+/* Separators are real text (" | "); the padding only widens the gap on the page. */
+.sep { padding: 0 2pt; color: var(--faint); }
+
+/* --------------------------------------------------------------- sections */
+
+.section { margin-top: 14pt; }
+.col > .section:first-child { margin-top: 0; }
+
+/* The square before the title and the hairline after it are empty boxes: no text. */
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6pt;
+  font-weight: 700;
+  font-size: 13pt;
+  line-height: 1.25;
+  color: var(--accent);
+}
+.section-title::before {
+  content: "";
+  flex: none;
+  width: 7pt;
+  height: 7pt;
+  margin-right: 7pt;
+  border-radius: 1.5pt;
+  background-color: var(--accent);
+}
+.section-title::after {
+  content: "";
+  flex: 1;
+  height: 0;
+  margin-left: 9pt;
+  border-top: 0.75pt solid var(--rule);
+}
+
+.item { break-inside: avoid; }
+.item--text p + p { padding-top: 3pt; }
+.strong-title { font-weight: 600; color: var(--heading); }
+
+/* ---------------------------------------------------------------- entries */
+
+.entry { padding-top: 9pt; }
+.section-title + .item > .entry,         /* first entry of a section */
+.section > .item:first-child > .entry,   /* top of a page the section continues on */
+.entry--continued { padding-top: 0; }
+
+.entry-title { font-weight: 600; font-size: 11pt; line-height: 1.3; color: var(--heading); }
+.entry-subtitle { font-weight: 600; color: var(--accent); }
+.entry-meta { font-size: 10pt; line-height: 1.4; color: var(--muted); }
+.entry-dates { padding-top: 0.5pt; font-weight: 500; }
+.entry-text { padding-top: 3pt; }
+.entry-tags { padding-top: 2pt; color: var(--muted); }
+
+/* The bullet is ordinary inline text at the start of the line ("• " then the sentence), with a
+   hanging indent for wrapped lines. */
+.bullets li { padding: 2pt 0 0 10pt; text-indent: -10pt; }
+.bullets li::before {
+  content: "• ";
+  display: inline-block;
+  width: 10pt;
+  text-indent: 0;
+  white-space: pre;
+  color: var(--accent);
+}
+
+/* ----------------------------------------------- skills, interests (tags) */
+
+/* "Group: keyword, keyword" on one line; the colon is only added when keywords follow. */
+.item--tags { padding-top: 2.5pt; }
+.section-title + .item--tags { padding-top: 0; }
+.tags-name { display: inline; font-weight: 600; color: var(--heading); }
+.tags-name:not(:last-child)::after { content: ":"; }
+.tags-level { font-weight: 400; color: var(--muted); }
+.tags-text { display: inline; }
+
+/* ------------------------------ achievements, languages, profiles, references */
+
+.item--achievement + .item--achievement,
+.item--reference + .item--reference { padding-top: 5pt; }
+.item--language + .item--language,
+.item--profiles p + p { padding-top: 2.5pt; }
+.reference-text { color: var(--text); }
+.reference-name { padding-top: 2pt; font-weight: 600; color: var(--heading); }
+
+/* certificates and awards, one line each: "Name, Issuer, 2026" */
+.line-title { font-weight: 600; color: var(--heading); }
+.item--line + .item--line { padding-top: 3pt; }
+.line-summary { padding-top: 1pt; }

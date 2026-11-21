@@ -1,0 +1,14 @@
+classic    Timeless serif layout with a centered header and ruled section headings in one parser-safe column, for finance, law, consulting, academia, the public sector and traditional employers.
+           columns: main; reads in order (safe for resume parsers)
+clear      One plain column in reading order: no icons, real-text bullets and separators. The safest choice for job portals and resume parsers.
+           columns: main; reads in order (safe for resume parsers)
+           formerly: single-column
+compact    Dense two-column layout with icons, rating dots and a round photo; fits the most on a page. For people: its two columns interleave when a parser reads the text.
+           columns: left, right; for people; parsers mix up its text
+           formerly: two-column
+modern     One column under a full-width accent band with the name and a round photo, with accent-marked headings: a contemporary look for tech and product roles that still reads in order for resume parsers.
+           columns: main; reads in order (safe for resume parsers)
+sidebar    Designer two-column layout with a tinted full-height sidebar for the photo, skills and languages, made for people reading it (email, interviews, direct applications) rather than for resume parsers.
+           columns: side, main; for people; parsers mix up its text
+timeline   A calm career timeline with the dates in a left gutter, joined by a thin line with a dot per role and all text on one strong edge; made for people to read, since resume parsers read the dates apart from their roles.
+           columns: main; for people; parsers mix up its text

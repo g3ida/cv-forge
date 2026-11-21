@@ -1,0 +1,48 @@
+{
+  "name": "clear",
+  "label": "Clear",
+  "description": "One plain column in reading order: no icons, real-text bullets and separators. The safest choice for job portals and resume parsers.",
+  "readingOrder": true,
+  "aliases": [
+    "single-column"
+  ],
+  "pageSize": "A4",
+  "margins": {
+    "top": 36,
+    "right": 42,
+    "bottom": 36,
+    "left": 42
+  },
+  "accentColor": "#1D5FA8",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

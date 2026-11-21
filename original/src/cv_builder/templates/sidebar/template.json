@@ -1,0 +1,38 @@
+{
+  "name": "sidebar",
+  "label": "Sidebar",
+  "description": "Designer two-column layout with a tinted full-height sidebar for the photo, skills and languages, made for people reading it (email, interviews, direct applications) rather than for resume parsers.",
+  "readingOrder": false,
+  "pageSize": "A4",
+  "margins": {
+    "top": 34,
+    "right": 34,
+    "bottom": 34,
+    "left": 26
+  },
+  "accentColor": "#2B5C8A",
+  "columns": {
+    "side": [
+      "skills",
+      "languages",
+      "certificates",
+      "awards",
+      "achievements",
+      "interests",
+      "profiles"
+    ],
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "projects",
+      "volunteer",
+      "publications",
+      "references"
+    ]
+  },
+  "titles": {},
+  "repeatTitles": true,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

@@ -1,0 +1,5 @@
+bin.name = "cv-builder"
+args = ["init", "my.json"]
+status.code = 1
+fs.sandbox = true
+fs.base = "init-exists.in"

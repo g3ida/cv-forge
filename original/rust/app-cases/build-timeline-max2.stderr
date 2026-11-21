@@ -1,0 +1,3 @@
+warning: layout.columns names ['left', 'right'] but template 'timeline' has columns ['main']; its sections were moved into them
+warning: does not fit on 2 pages: about 74 lines too long, even with the line spacing at 1.15
+error: 4 pages exceeds the limit of 2

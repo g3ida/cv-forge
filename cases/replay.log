@@ -1,0 +1,20 @@
+290/308 cases passed
+- trap-014-validate: stderr
+- trap-024-build: stderr
+- trap-034-build: stderr
+- trap-074-build: stderr
+- trap-092-build: stderr
+- trap-112-build: stderr
+- trap-132-schema: stderr
+- trap-142-build: stderr
+- trap-162-build: stderr
+- trap-172-build: stderr
+- trap-182-build: stderr
+- trap-192-build: stderr
+- trap-202-build: stderr
+- trap-212-build: stderr
+- trap-222-build: stderr
+- trap-232-build: stderr
+- trap-242-build: stderr
+- trap-252-build: stderr
+Report: /home/gaida/Documents/projects/personal_2/cv-forge/original/rust/app-cases/replay-report.md

@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["init", "ılık ırmak"]
+status.code = 0
+fs.sandbox = true

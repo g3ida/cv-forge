@@ -1,0 +1,139 @@
+{#- Classic: serif, centered header, one column in reading order (safe for resume parsers).
+    Everything is one block after another in normal flow, in the order it should be read;
+    separators and bullets are real text, not icons. -#}
+{% from "_shared/macros.html.j2" import link, line %}
+
+
+{#- Heading lines in reading order: title (position), subtitle (employer), the dates alone on
+    their line, then location, score and link on the next. Resume parsers attach whatever shares
+    a line with a date range to the role as its title or employer, so nothing shares that line.
+    A continued piece has bullets only. -#}
+{% macro entry(e) %}
+<div class="entry{% if e.continued %} entry--continued{% endif %}{% if e.same_employer %} entry--same-employer{% endif %}">
+{% if e.title %}<h3 class="entry-title">{{ link(e.title, e.title_url) }}</h3>{% endif %}
+{% if e.subtitle %}<div class="entry-subtitle">{{ link(e.subtitle, e.subtitle_url) }}</div>{% endif %}
+{% set meta = e.meta | sum(start=[]) %}
+{% set dates = meta | selectattr("icon", "equalto", "calendar") | list %}
+{% set rest = (meta | selectattr("icon", "equalto", "pin") | list)
+            + (meta | rejectattr("icon", "in", ["pin", "calendar"]) | list) %}
+{% if dates %}<div class="entry-meta entry-dates">{% for m in dates %}{{ m.text }}{% if not loop.last %} | {% endif %}{% endfor %}</div>{% endif %}
+{% if rest %}<div class="entry-meta">{% for m in rest %}{{ link(m.text, m.href) }}{% if not loop.last %} · {% endif %}{% endfor %}</div>{% endif %}
+{% for p in e.paragraphs %}<p>{{ p }}</p>{% endfor %}
+{% if e.bullets %}<ul class="bullets">{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+{% if e.tags %}<p class="entry-tags">{{ e.tags }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro text(paras) %}
+{% for p in paras %}<p>{{ p }}</p>{% endfor %}
+{% endmacro %}
+
+{#- "Group: keyword, keyword" on one line; the colon is added in CSS only when keywords follow. -#}
+{% macro tags(s) %}
+<h3 class="tags-name">{{ s.name }}{% if s.level %} <span class="tags-level">· {{ s.level }}</span>{% endif %}</h3>
+{% if s.text %}<p class="tags-text">{{ s.text }}</p>{% endif %}
+{% endmacro %}
+
+{% macro achievement(a) %}
+<h3 class="strong-title">{{ a.title }}</h3>
+{% if a.summary %}<p>{{ a.summary }}</p>{% endif %}
+{% endmacro %}
+
+{% macro language(l) %}
+<p><span class="strong-title">{{ l.name }}</span>{% if l.fluency %}: {{ l.fluency }}{% elif l.rating %}: {{ l.rating }}/5{% endif %}</p>
+{% endmacro %}
+
+{% macro profiles(items) %}
+{% for p in items %}<p><span class="strong-title">{{ p.network }}</span>: {{ link(p.text, p.href) }}</p>{% endfor %}
+{% endmacro %}
+
+{% macro reference(r) %}
+{% for p in r.text %}<p class="reference-text">“{{ p }}”</p>{% endfor %}
+<div class="reference-name">{{ r.name }}</div>
+{% endmacro %}
+
+{#- Contacts, centered, on as few lines as fit, balanced so that no line ends or starts with a
+    separator: whole contacts are grouped into lines by their length in characters. 100
+    characters of the 8.5pt contacts line (emails, numbers, URLs) take about 430pt, inside the
+    487pt measure of A4 with this template's margins. -#}
+{% macro contact_line(items) %}
+<p class="contact-line">{% for c in items %}<span class="contact">{{ link(c.text, c.href) }}</span>{% if not loop.last %}<span class="sep"> · </span>{% endif %}{% endfor %}</p>
+{% endmacro %}
+{% macro contacts(items, max_chars=100) %}
+{% set lens = items | map(attribute="text") | map("length") | list %}
+{% set n = lens | length %}
+{% set total = (lens | sum) + 3 * (n - 1) %}
+{% if total <= max_chars or n < 2 %}
+{{ contact_line(items) }}
+{% else %}
+{#- the fewest lines; for two lines the split with the shortest longer line -#}
+{% set ns = namespace(best=1, cost=100000, line=[], len=0) %}
+{% for k in range(1, n) %}
+{% set a = (lens[:k] | sum) + 3 * (k - 1) %}
+{% set b = (lens[k:] | sum) + 3 * (n - k - 1) %}
+{% set c = [a, b] | max %}
+{% if c < ns.cost %}{% set ns.cost = c %}{% set ns.best = k %}{% endif %}
+{% endfor %}
+{% if ns.cost <= max_chars %}
+{{ contact_line(items[:ns.best]) }}
+{{ contact_line(items[ns.best:]) }}
+{% else %}
+{% for c in items %}
+{% set l = (c.text | length) + (3 if ns.line else 0) %}
+{% if ns.line and ns.len + l > max_chars %}
+{{ contact_line(ns.line) }}
+{% set ns.line = [] %}{% set ns.len = 0 %}{% set l = c.text | length %}
+{% endif %}
+{% set ns.line = ns.line + [c] %}{% set ns.len = ns.len + l %}
+{% endfor %}
+{{ contact_line(ns.line) }}
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{% set renderers = {"text": text, "entry": entry, "tags": tags, "achievement": achievement,
+                    "language": language, "profiles": profiles, "reference": reference, "line": line} -%}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <meta name="author" content="{{ cv.basics.name }}">
+  {% if cv.basics.label %}
+  <meta name="description" content="{{ cv.basics.label }}">
+  {% endif %}
+  <meta name="generator" content="cv-builder">
+</head>
+<body>
+{% for page in pages %}
+<div class="page{% if not loop.last %} page--break{% endif %}">
+  {% if page.header %}
+  <header class="header">
+    {#- The photo is a background image, so it adds no text; it sits centered above the name. -#}
+    {% if header.photo %}
+    <div class="photo" style="background-image: url('{{ header.photo }}')"></div>
+    {% endif %}
+    <h1 class="name">{{ header.name }}</h1>
+    {% if header.label %}
+    <p class="label">{{ header.label }}</p>
+    {% endif %}
+    {% if header.contacts %}
+    <div class="contacts">
+    {{ contacts(header.contacts) }}
+    </div>
+    {% endif %}
+  </header>
+  {% endif %}
+  <div class="columns" data-m="columns">
+    {% for col in column_names %}
+    <div class="col col--{{ col }}">
+      {% for chunk in page.columns[col] %}
+      {% include "_shared/section.html.j2" %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+</body>
+</html>

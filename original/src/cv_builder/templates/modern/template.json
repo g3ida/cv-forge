@@ -1,0 +1,45 @@
+{
+  "name": "modern",
+  "label": "Modern",
+  "description": "One column under a full-width accent band with the name and a round photo, with accent-marked headings: a contemporary look for tech and product roles that still reads in order for resume parsers.",
+  "readingOrder": true,
+  "pageSize": "A4",
+  "margins": {
+    "top": 38,
+    "right": 44,
+    "bottom": 36,
+    "left": 44
+  },
+  "accentColor": "#1F4E8C",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

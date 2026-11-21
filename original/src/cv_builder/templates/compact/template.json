@@ -1,0 +1,39 @@
+{
+  "name": "compact",
+  "label": "Compact",
+  "description": "Dense two-column layout with icons, rating dots and a round photo; fits the most on a page. For people: its two columns interleave when a parser reads the text.",
+  "readingOrder": false,
+  "aliases": [
+    "two-column"
+  ],
+  "pageSize": "A4",
+  "margins": {
+    "top": 35,
+    "right": 38.3,
+    "bottom": 35,
+    "left": 38.7
+  },
+  "accentColor": "#1E90FF",
+  "columns": {
+    "left": [
+      "work",
+      "volunteer",
+      "education",
+      "references",
+      "profiles"
+    ],
+    "right": [
+      "summary",
+      "achievements",
+      "skills",
+      "projects",
+      "awards",
+      "certificates",
+      "publications",
+      "languages",
+      "interests"
+    ]
+  },
+  "titles": {},
+  "fitTolerance": -0.1
+}

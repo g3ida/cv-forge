@@ -1,0 +1,221 @@
+{
+  "$schema": "../schema/cv.schema.json",
+  "basics": {
+    "name": "Samuel Antoine Rémi Duval",
+    "label": "Software Engineer | C++ Systems | AI Optimization | Parallel Computing",
+    "image": "photo.jpg",
+    "email": "s.duval@example.com",
+    "phone": "0049 1234 5678900",
+    "url": "https://sduval.example",
+    "summary": "Software engineer with 7 years of experience in compiler and systems programming and AI software development, expert in C++ optimization and AI frameworks. Key achievements include reducing an automotive Android service’s boot time from 52 seconds to 13 seconds and building a C++17 document intelligence engine that achieved a 50% speed improvement and 20% lower character error rate. Seeking a Compiler Engineer position at Nexalis, where my compiler and AI development skills can support the mission of bringing breakthrough neuromorphic technology into real-world deployment.",
+    "location": { "city": "Munich", "countryCode": "DE" },
+    "profiles": [
+      { "network": "LinkedIn", "username": "samuel-antoine-remi-duval-00000a000", "url": "https://www.linkedin.com/in/samuel-antoine-remi-duval-00000a000" },
+      { "network": "GitHub", "username": "duval-sample", "url": "https://github.com/duval-sample" },
+      { "network": "Hugging Face", "username": "duval-sample", "url": "https://huggingface.co/duval-sample" }
+    ]
+  },
+  "work": [
+    {
+      "name": "LUMEN FIELD GmbH",
+      "position": "Principal Engineer - In-Flight Entertainment",
+      "location": "Munich, Germany",
+      "startDate": "2026-07",
+      "description": "Lumen Field is a specialist in human-machine interfaces (HMI) software development and official software partner for Velora and other automotive companies",
+      "highlights": [
+        "Containerized local AI coding agent with Podman and Docker, hardening the setup with user isolation and security best practices",
+        "Helped set up local LLM infrastructure for internal development workflows, enabling private, on-premise AI assistance",
+        "Technical lead of the team building a React / TypeScript IFE app for constrained inflight hardware"
+      ]
+    },
+    {
+      "name": "LUMEN FIELD GmbH",
+      "position": "Principal Engineer - Automotive Infotainment Platform",
+      "location": "Munich, Germany",
+      "startDate": "2022-11",
+      "endDate": "2026-06",
+      "summary": "Android-based automotive infotainment platform developed for Velora. Progressed from Senior Engineer to Principal Engineer leading technical work within a team of 4–6 developers across requirements, platform architecture, application features, HAL components, maintenance, and quality from Android 13 through Android 16.",
+      "highlights": [
+        "Implemented robust Hardware Abstraction Layer (HAL) in C++ communicating with car functions over SOME/IP, and managed the corresponding SELinux policies",
+        "Designed and implemented SDKs and libraries used by multiple developers at Velora",
+        "Worked with Velora to refine requirements and plan milestones.",
+        "Refactored platform and application code by introducing dependency injection, reactive programming with Kotlin Flows, SPOT principles, and separation of concerns, improving testability and supporting higher code coverage",
+        "Used Android Studio's CPU Profiler to investigate performance issues, reduced the defect backlog from more than 200 to fewer than 20, and integrated HAL testing, JaCoCo coverage, and SonarQube quality gates into CI",
+        "Established technical documentation and collaborated with cross-functional teams to define architecture and drive implementation standards for Android HMI applications."
+      ]
+    },
+    {
+      "name": "Ledgerly (Spendo)",
+      "position": "Full Stack Developer",
+      "startDate": "2020-07",
+      "endDate": "2022-07",
+      "description": "B2B SaaS provider specializing in automated business expense management, corporate spend optimization, and paperless receipt processing.",
+      "highlights": [
+        "Engineered the payment project with integrated banking features for accounts and cards, utilizing Banqo as a BaaS provider through OAuth2-secured GraphQL APIs and payment decision webhooks optimized for sub-1-second response times.",
+        "Implemented a hierarchical validation workflow for employees and managers, including the supporting REST APIs and web views",
+        "Supported the rollout of German compliance requirements by adapting customer communications for signup and marketing",
+        "Implemented a rule-based validation engine and batch processing for validation emails after user imports",
+        "Resolved critical production bugs, including transaction-related issues, using Azure Application Insights; wrote service and web end-to-end tests to strengthen release quality"
+      ]
+    },
+    {
+      "name": "Orbis Risk and Compliance",
+      "position": "Research and Development - Computer Vision",
+      "startDate": "2019-07",
+      "endDate": "2020-06",
+      "description": "B2B software provider specializing in AI-powered financial crime compliance, risk management, and regulatory reporting solutions for banks and financial institutions.",
+      "highlights": [
+        "Developed a C++17 application architecture that processes structured documents (identity cards, driving licenses, car registrations, bank and insurance forms) and extracts data fields.",
+        "Image segmentation (U-Net or custom edge detection) and CNN classification, trained in PyTorch and run in C++ with LibTorch",
+        "Document alignment with image registration (SIFT, BRISK, AKAZE, ORB) and outlier rejection (RANSAC, Vector Field Consensus)",
+        "Designed a multithreaded REST API in C++ with cppRestSDK",
+        "Improved performance through AVX vectorization and code optimization; used Valgrind to profile memory issues and benchmarked speed and accuracy against the previous-generation engine",
+        "Embedded Lua as a plugin runtime so customer-specific validation logic runs without changing the core engine",
+        "Fine-tuned Tesseract LSTM models, reconstructed damaged barcodes",
+        "Built a union-find-based document-matching algorithm"
+      ]
+    },
+    {
+      "name": "Orbis Labs Lyon",
+      "position": "Graduation Intern",
+      "startDate": "2019-02",
+      "endDate": "2019-06",
+      "summary": "Worked on the generic document identification and data extraction pipeline for Archivo, Orbis's document management system"
+    },
+    {
+      "name": "Kodara (Freelance)",
+      "position": "iOS App Developer",
+      "startDate": "2019-09",
+      "endDate": "2020-03",
+      "highlights": [
+        "Developed a native iOS app in Swift for KeyCourier: authentication, car/key selection, camera-based key scanning, ordering and a digital key vault"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Higher School of Computer Engineering",
+      "studyType": "Engineering Master Degree",
+      "area": "Computer Science",
+      "location": "France",
+      "startDate": "2016",
+      "endDate": "2019",
+      "highlights": [
+        "Specialization in Intelligent Systems and Artificial Intelligence during the final year"
+      ]
+    },
+    {
+      "institution": "Preparatory Institute for Engineering Studies of Grenoble",
+      "studyType": "Diploma",
+      "area": "Preparatory Studies in Technology",
+      "location": "France",
+      "startDate": "2014",
+      "endDate": "2016",
+      "highlights": [
+        "Achieved 34th rank out of 812 in national engineering examination, demonstrating problem-solving skills and technical aptitude."
+      ]
+    }
+  ],
+  "achievements": [
+    {
+      "title": "Automotive Platform Optimization",
+      "summary": "Led the refactoring of a time-critical automotive Android system service, reducing boot time from 52s to 13s.",
+      "icon": "gem"
+    },
+    {
+      "title": "Document Intelligence Engine",
+      "summary": "Built a next-generation C++17 document-understanding engine that achieved a 50% speed boost and 20% CER reduction on CPU compared with the previous-gen engine.",
+      "icon": "gem"
+    },
+    {
+      "title": "SWERC Qualification",
+      "summary": "Qualified for the SWERC (Southwestern Europe Regional Contest) after participating in the FCPC (France Collegiate Programming Championship)",
+      "icon": "gem"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Android & AOSP",
+      "keywords": ["AAOS", "HAL", "HIDL", "AIDL", "SOME/IP", "platform services", "Kotlin", "Java", "Jetpack Compose", "Android HMI architecture", "LLVM", "MLIR", "Python"]
+    },
+    {
+      "name": "Systems Programming",
+      "keywords": ["C", "C++", "Rust", "multithreading", "SIMD", "AVX optimization", "CMake", "Catch2", "Compiler engineering"]
+    },
+    {
+      "name": "Security, Privacy & Containers",
+      "keywords": ["SELinux policies", "automotive security and privacy requirements", "LLM Security", "Podman", "Docker"]
+    },
+    {
+      "name": "Software Architecture & Engineering",
+      "keywords": ["Compilers", "virtual machines", "software optimization", "SDKs", "API design", "Design patterns and Architecture", "Low-level understanding", "game development"]
+    },
+    {
+      "name": "Algorithms",
+      "keywords": ["Data structures and algorithms", "competitive programming"]
+    },
+    {
+      "name": "AI & LLMs",
+      "keywords": ["AI agents", "model training and fine-tuning (LoRA)", "local LLM deployment and security", "Transformers", "PyTorch", "LibTorch"]
+    },
+    {
+      "name": "Tools & Delivery",
+      "keywords": ["Git", "Gerrit", "SonarQube", "JaCoCo", "CI/CD", "Zuul", "Azure Pipelines", "Docker", "Podman", "Jira", "GitHub and GitHub Actions", "Claude Code", "OpenCode"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Hindi Post-OCR",
+      "startDate": "2026",
+      "endDate": "2026",
+      "url": "https://github.com/duval-sample/hindi-postocr",
+      "description": "Post-OCR correction for Hindi: one model detects errors, another repairs only the flagged spans, with a second-pass gate that routes uncertain repairs to human review. +22.0% CER reduction on 1,000 held-out documents. Apache-2.0"
+    },
+    {
+      "name": "Paint the Skyline",
+      "startDate": "2022",
+      "url": "https://github.com/duval-sample/PaintTheSkyline",
+      "description": "2D color-matching platformer built with Godot 4 and C#: Featuring Optimized gameplay and Dynamic controls, localization in 7 languages. MIT"
+    },
+    {
+      "name": "Chat++",
+      "startDate": "2021",
+      "endDate": "2021",
+      "url": "https://github.com/duval-sample/chatpp",
+      "description": "Peer-to-peer WebSocket secure chat console application in C++17"
+    },
+    {
+      "name": "OCR Classifier",
+      "startDate": "2019",
+      "endDate": "2019",
+      "url": "https://github.com/Duval-sample/ocr-classifier",
+      "description": "Multithreaded C++17 command-line tool that sorts scanned documents into folders based on their OCR text (Tesseract)"
+    },
+    {
+      "name": "Compiler implementation",
+      "startDate": "2018",
+      "endDate": "2018",
+      "url": "https://github.com/duval-sample/pascal-vm",
+      "description": "Compiler written in C for a Pascal-like language, emitting code for a stack-based virtual machine, with the VM interpreter implemented in C++"
+    }
+  ],
+  "languages": [
+    { "language": "Spanish", "fluency": "Native", "rating": 5 },
+    { "language": "French", "fluency": "Fluent", "rating": 4 },
+    { "language": "English", "fluency": "Fluent", "rating": 4 },
+    { "language": "German", "fluency": "B1", "rating": 3 }
+  ],
+  "layout": {
+    "template": "compact",
+    "accentColor": "#1E90FF",
+    "documentTitle": "Android HMI Architect - Samuel Antoine Remi Duval",
+    "columns": {
+      "left": ["work", "education", "profiles"],
+      "right": ["summary", "achievements", "skills", "projects", "languages"]
+    },
+    "header": {
+      "contacts": ["phone", "email", "url"],
+      "profiles": ["LinkedIn"]
+    }
+  }
+}

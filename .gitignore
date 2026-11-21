@@ -1,0 +1,8 @@
+target/
+/ports/*/target/
+/ports/*/python/**/*.so
+/original/rust/target/
+/original/rust/app-cases/replay-report.md
+*.pdf
+/bench-out/
+/dist/

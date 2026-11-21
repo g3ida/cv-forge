@@ -1,0 +1,263 @@
+/* timeline template: dates in a left gutter, a thin line with a dot per entry, and every text
+ * block on one content edge.
+ *
+ * Horizontal grid, from the left margin:
+ *   0 - 112pt   gutter: dates and location (right-aligned), skill groups, languages, networks
+ *   112 - 128pt rail: the line and the dots sit on its axis at 120pt
+ *   128pt       content edge: section titles, entries, summary, keywords, references
+ *
+ * Text extraction: no floats, tables or positioned boxes; bullets and separators are real
+ * text; no letter-spacing, text-transform, hyphenation or ligatures. The grid of an entry
+ * changes where the dates are on the page, not where they are in the text (see cv.html.j2).
+ *
+ * Space inside and between .items is made with padding, never margin: the builder measures
+ * the border box of every item, and a margin would collapse out of it.
+ */
+
+:root {
+  --accent: #2d5b86;
+  --text: #2b2e33;
+  --heading: #15181c;
+  --muted: #646a72;
+  --faint: #8a9098;
+  --line: #c3c8ce;   /* also written as rgba(195, 200, 206, 0) in the .entry gradients */
+  --rule: #d3d7dc;
+}
+
+html {
+  font-family: "Inter", sans-serif;
+  font-size: 10pt;
+  line-height: 1.38;
+  color: var(--text);
+  font-variant-ligatures: none;
+  hyphens: manual;
+}
+
+body { margin: 0; }
+
+a { color: inherit; text-decoration: none; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: inherit; font-size: inherit; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+.page--break { break-after: page; }
+
+/* ----------------------------------------------------------------- header */
+
+.header {
+  margin-bottom: 16pt;
+  padding-bottom: 13pt;
+  border-bottom: 0.6pt solid var(--rule);
+}
+.name {
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 26.5pt;
+  line-height: 1.15;
+  color: var(--heading);
+}
+/* pypdf starts a new line only when the next baseline is far enough below the name; these
+   gaps keep the name on a line of its own. */
+.label {
+  padding-top: 5pt;
+  font-weight: 500;
+  font-size: 11.5pt;
+  line-height: 1.3;
+  color: var(--accent);
+}
+.contacts { padding-top: 6pt; font-size: 10pt; color: var(--muted); }
+.contact { white-space: nowrap; }
+.sep { color: var(--faint); }
+
+/* The photo is a background image, so it adds no text; it follows the text in the source. */
+.header--photo { display: flex; align-items: flex-start; }
+.header--photo .header-text { flex: 1; min-width: 0; padding-right: 16pt; }
+.photo {
+  flex: none;
+  width: 64pt;
+  height: 64pt;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* --------------------------------------------------------------- sections */
+
+.section { margin-top: 16pt; }
+.col > .section:first-child { margin-top: 0; }
+
+/* The title sits on the content edge, a small square marks the axis and a hairline runs to
+   the right margin. */
+.section-title {
+  display: flex;
+  align-items: center;
+  padding-bottom: 7pt;
+  font-family: "Rubik", sans-serif;
+  font-weight: 500;
+  font-size: 13pt;
+  line-height: 1.2;
+  color: var(--accent);
+}
+.section-title::before {
+  content: "";
+  flex: none;
+  width: 5pt;
+  height: 5pt;
+  margin: 0 5.5pt 0 91.5pt;
+  background: var(--accent);
+}
+.section-title::after {
+  content: "";
+  flex: 1;
+  margin-left: 9pt;
+  border-top: 0.6pt solid var(--rule);
+}
+
+.item { break-inside: avoid; }
+.strong-title { font-weight: 600; color: var(--heading); }
+
+/* ---------------------------------------------------------------- entries */
+
+.entry {
+  display: grid;
+  grid-template-columns: 112pt 16pt minmax(0, 1fr);
+  padding-top: 11pt;
+}
+.entry-rail { grid-column: 2; grid-row: 1; }
+.entry-head { grid-column: 3; grid-row: 1; }
+.entry-when { grid-column: 1; grid-row: 1 / span 2; }
+.entry-body { grid-column: 3; grid-row: 2; }
+.entry--continued .entry-body { grid-row: 1; }
+
+/* first entry of a section, first piece on a page, and continued pieces: no gap above */
+.section-title + .item > .entry,
+.section > .item:first-child > .entry,
+.entry--continued { padding-top: 0; }
+
+/* The line is the entry's own background, so it also runs through the padding between
+   entries and joins the pieces of a split entry; in the first entry of a section it starts
+   at the dot. WeasyPrint paints a one-colour gradient over the whole box (it ignores
+   background-size), and a "transparent" hard stop rasterises as a black row at some
+   resolutions: hence the line colour at alpha 0 as the first stop. */
+.entry {
+  background-image: linear-gradient(to bottom, rgba(195, 200, 206, 0) 0, var(--line) 0);
+  background-repeat: no-repeat;
+  background-size: 0.75pt 100%;
+  background-position: 119.625pt 0;
+}
+.section-title + .item > .entry {
+  background-image: linear-gradient(to bottom, rgba(195, 200, 206, 0) 6pt, var(--line) 6pt);
+}
+
+/* a ring on the axis, level with the title's x-height; filled while the role is ongoing */
+.entry-dot {
+  display: block;
+  box-sizing: border-box;
+  width: 7pt;
+  height: 7pt;
+  margin: 3.4pt auto 0;
+  border: 1.5pt solid var(--accent);
+  border-radius: 50%;
+  background: #ffffff;
+}
+.entry--current .entry-dot { background: var(--accent); }
+
+/* Dates share the title's baseline. They never wrap: the widest range, "May 2008 – May 2008"
+   in tabular figures, is about 109pt at 10pt, hence the 112pt gutter. */
+.entry-when { text-align: right; }
+.entry-dates {
+  padding-top: 2.2pt;
+  font-size: 10pt;
+  line-height: 1.3;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.entry-place { padding-top: 1pt; font-size: 10pt; line-height: 1.3; color: var(--faint); }
+
+.entry-title { font-weight: 600; font-size: 11pt; line-height: 1.3; color: var(--heading); }
+.entry-subtitle { font-weight: 500; color: var(--accent); }
+.entry-meta { color: var(--muted); }
+.meta { white-space: nowrap; }
+.meta + .meta { padding-left: 8pt; }
+.meta svg { vertical-align: -0.9pt; margin-right: 3pt; }
+.entry-body p { padding-top: 2.5pt; }
+.entry-tags { color: var(--muted); }
+
+/* The bullet is ordinary text at the start of the line ("• " then the sentence), with a
+   hanging indent for wrapped lines. */
+.bullets li { padding: 2pt 0 0 9pt; text-indent: -9pt; }
+.bullets li::before {
+  content: "• ";
+  display: inline-block;
+  width: 9pt;
+  text-indent: 0;
+  white-space: pre;
+  color: var(--accent);
+}
+
+/* ------------------------------------------------- rows: label in the gutter */
+
+.row { display: flex; align-items: flex-start; }
+.row-label {
+  flex: none;
+  width: 112pt;
+  margin-right: 16pt;
+  text-align: right;
+  font-weight: 600;
+  color: var(--heading);
+}
+.row-body { flex: 1; min-width: 0; }
+.row-body .strong-title + p { padding-top: 1pt; }
+/* achievements: the icon is centred on the axis */
+.row-icon { flex: none; width: 9.5pt; margin: 1pt 3.25pt 0 115.25pt; }
+.row-icon svg { display: block; }
+
+/* summary, references: on the content edge */
+.item--text, .item--reference { padding-left: 128pt; }
+.item--text p + p { padding-top: 4pt; }
+
+/* skills, interests: group name in the gutter, keywords on the content edge; a group
+   without keywords puts its name on the content edge */
+.item--tags { display: flex; align-items: flex-start; padding-top: 4pt; }
+.section-title + .item--tags,
+.section > .item--tags:first-child { padding-top: 0; }
+.tags-name {
+  flex: none;
+  width: 112pt;
+  margin-right: 16pt;
+  text-align: right;
+  font-weight: 600;
+  color: var(--heading);
+}
+.tags-name:only-child { width: auto; margin-left: 128pt; text-align: left; }
+.tags-level { font-weight: 400; color: var(--muted); }
+.tags-text { flex: 1; min-width: 0; }
+
+.item--achievement + .item--achievement,
+.item--reference + .item--reference { padding-top: 5pt; }
+.item--language + .item--language { padding-top: 2pt; }
+.item--profiles .row + .row { padding-top: 2pt; }
+
+/* a language with a rating but no fluency */
+.dots { white-space: nowrap; }
+.dot {
+  display: inline-block;
+  width: 6pt;
+  height: 6pt;
+  margin-right: 2.5pt;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.dot--on { background: var(--accent); }
+
+.reference-text + .reference-text { padding-top: 2pt; }
+.reference-name { padding-top: 2pt; font-weight: 600; color: var(--heading); }
+.reference-text + .reference-name::before { content: "– "; font-weight: 400; color: var(--muted); }
+
+/* certificates and awards, one line each: "Name, Issuer, 2026", on the content edge */
+.item--line { padding-left: 128pt; }
+.line-title { font-weight: 600; color: var(--heading); }
+.item--line + .item--line { padding-top: 3pt; }
+.line-summary { padding-top: 1pt; }

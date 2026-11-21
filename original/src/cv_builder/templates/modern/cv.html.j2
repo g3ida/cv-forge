@@ -1,0 +1,87 @@
+{#- Modern: one column under a full-width colour band. Everything is one block after another in
+    normal flow, in the order it should be read (the band is a block with negative margins, the
+    photo a flex item after the text that adds no text); bullets and separators are real text. -#}
+{% from "_shared/macros.html.j2" import link, text, tags, reference, line %}
+
+{#- Heading lines in reading order: title (position), subtitle (company), the dates alone on
+    their line, then location, score and link on the next. A resume parser attaches whatever
+    shares a line with a date range to the role, so nothing shares that line.
+    A continued piece (see "splitEntries") has bullets only. -#}
+{% macro entry(e) %}
+<div class="entry{% if e.continued %} entry--continued{% endif %}{% if e.same_employer %} entry--same-employer{% endif %}">
+{% if e.title %}<h3 class="entry-title">{{ link(e.title, e.title_url) }}</h3>{% endif %}
+{% if e.subtitle %}<div class="entry-subtitle">{{ link(e.subtitle, e.subtitle_url) }}</div>{% endif %}
+{% set meta = e.meta | sum(start=[]) %}
+{% set dates = meta | selectattr("icon", "equalto", "calendar") | list %}
+{% set rest = (meta | selectattr("icon", "equalto", "pin") | list)
+            + (meta | rejectattr("icon", "in", ["pin", "calendar"]) | list) %}
+{% if dates %}<div class="entry-meta entry-dates">{% for m in dates %}{{ m.text }}{% if not loop.last %} | {% endif %}{% endfor %}</div>{% endif %}
+{% if rest %}<div class="entry-meta">{% for m in rest %}{{ link(m.text, m.href) }}{% if not loop.last %}<span class="sep"> | </span>{% endif %}{% endfor %}</div>{% endif %}
+{% for p in e.paragraphs %}<p class="entry-text">{{ p }}</p>{% endfor %}
+{% if e.bullets %}<ul class="bullets">{% for b in e.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+{% if e.tags %}<p class="entry-tags">{{ e.tags }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro achievement(a) %}
+<h3 class="strong-title">{{ a.title }}</h3>
+{% if a.summary %}<p>{{ a.summary }}</p>{% endif %}
+{% endmacro %}
+
+{% macro language(l) %}
+<p><span class="strong-title">{{ l.name }}</span>{% if l.fluency %}: {{ l.fluency }}{% elif l.rating %}: {{ l.rating }}/5{% endif %}</p>
+{% endmacro %}
+
+{% macro profiles(items) %}
+{% for p in items %}<p><span class="strong-title">{{ p.network }}</span>: {{ link(p.text, p.href) }}</p>{% endfor %}
+{% endmacro %}
+
+{% set renderers = {"text": text, "entry": entry, "tags": tags, "achievement": achievement,
+                    "language": language, "profiles": profiles, "reference": reference, "line": line} -%}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <meta name="author" content="{{ cv.basics.name }}">
+  {% if cv.basics.label %}
+  <meta name="description" content="{{ cv.basics.label }}">
+  {% endif %}
+  <meta name="generator" content="cv-builder">
+</head>
+<body>
+{% for page in pages %}
+<div class="page{% if not loop.last %} page--break{% endif %}">
+  {% if page.header %}
+  <header class="header{% if header.photo %} header--photo{% endif %}">
+    <div class="band">
+      <div class="band-text">
+        <h1 class="name">{{ header.name }}</h1>
+        {% if header.label %}
+        <p class="label">{{ header.label }}</p>
+        {% endif %}
+      </div>
+      {% if header.photo %}
+      <div class="photo" style="background-image: url('{{ header.photo }}')"></div>
+      {% endif %}
+    </div>
+    {% if header.contacts %}
+    <div class="strip">
+      <p class="contacts">{% for c in header.contacts %}<span class="contact">{{ link(c.text, c.href) }}{% if not loop.last %}<span class="sep"> |</span>{% endif %}</span>{% if not loop.last %} {% endif %}{% endfor %}</p>
+    </div>
+    {% endif %}
+  </header>
+  {% endif %}
+  <div class="columns" data-m="columns">
+    {% for col in column_names %}
+    <div class="col col--{{ col }}">
+      {% for chunk in page.columns[col] %}
+      {% include "_shared/section.html.j2" %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+</body>
+</html>

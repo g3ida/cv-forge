@@ -1,0 +1,10 @@
+many.json: 7 problem(s)
+  basics.email: Input should be a valid string
+  basics.foo: Extra inputs are not permitted
+  work[0].startDate: invalid date '2020-13': use YYYY, YYYY-MM or YYYY-MM-DD
+  layout.pageSize: Input should be 'A4' or 'Letter'
+  layout.maxPages: Input should be greater than or equal to 1
+  layout.accentColor: String should match pattern '^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$'
+  layout.columns.main[2]: Input should be 'summary', 'work', 'volunteer', 'education', 'projects', 'skills', 'languages', 'achievements', 'awards', 'certificates', 'publications', 'interests', 'references' or 'profiles'
+noname.json: 1 problem(s)
+  basics.name: Field required

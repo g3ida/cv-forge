@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["build", "👨‍👩‍👧 family", "-o", "out/cv.pdf", "--accent", "#0B7A75", "--page-size", "Letter"]
+status.code = 1
+fs.sandbox = true

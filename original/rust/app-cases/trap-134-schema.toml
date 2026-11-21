@@ -1,0 +1,4 @@
+bin.name = "cv-builder"
+args = ["schema", "-o", "İstanbul"]
+status.code = 0
+fs.sandbox = true

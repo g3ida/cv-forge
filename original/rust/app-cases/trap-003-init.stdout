@@ -1,0 +1,3 @@
+wrote 日本語
+wrote cv.schema.json
+edit 日本語, then run: cv-builder build 日本語

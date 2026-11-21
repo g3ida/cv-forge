@@ -1,0 +1,1 @@
+{"basics": {"name": "A", "email": 5, "foo": 1}, "work": [{"startDate": "2020-13", "endDate": "2019"}], "layout": {"maxPages": 0, "accentColor": "blue", "pageSize": "A5", "columns": {"main": ["work", "work", "nope"]}}}
