@@ -62,8 +62,9 @@ r = cvforge.build(cv_json, base_dir, template="compact", max_pages=2, pdf="cv.pd
 r["pages"], r["fit"], r["notes"], r["thumbnail"]      # PNG bytes of page 1
 ```
 
-`tools/install-into-career-ledger.sh` builds the wheels (cv-forge and pdf-raster) and installs
-them where auto-apply uses them (DECISIONS.md ADR-022).
+`tools/install-into-career-ledger.sh` builds the cv-forge wheel and installs it where auto-apply
+uses it (DECISIONS.md ADR-022). pdf-raster is a career-ledger workspace project, installed by its
+`uv sync`.
 
 ## Layout
 
