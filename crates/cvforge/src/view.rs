@@ -10,23 +10,9 @@ use crate::dates;
 use crate::model::{self, Cv, Profile};
 use crate::pyfmt;
 use crate::text::{self, Rich, href, inline, keep, keep_str, paragraphs, pretty_url};
+use crate::wording::{CvLocale, TITLES_EN, Titles};
 
-pub const DEFAULT_TITLES: [(&str, &str); 14] = [
-    ("summary", "Summary"),
-    ("work", "Experience"),
-    ("volunteer", "Volunteering"),
-    ("education", "Education"),
-    ("projects", "Projects"),
-    ("skills", "Skills"),
-    ("languages", "Languages"),
-    ("achievements", "Key Achievements"),
-    ("awards", "Awards"),
-    ("certificates", "Certifications"),
-    ("publications", "Publications"),
-    ("interests", "Interests"),
-    ("references", "References"),
-    ("profiles", "Find Me Online"),
-];
+pub const DEFAULT_TITLES: Titles = TITLES_EN;
 
 #[derive(Clone, Debug, Serialize, PartialEq)]
 pub struct MetaItem {
@@ -62,6 +48,8 @@ pub struct Entry {
     pub tags: Option<Rich>,
     /// A later piece of an entry cut up by `split_entries`.
     pub continued: bool,
+    /// Still going on: no end date, or "present" (the timeline marks it, whatever the language).
+    pub current: bool,
     /// A work entry at the same company as the one before it.
     pub same_employer: bool,
 }
@@ -217,11 +205,16 @@ fn titles_line(w: &model::Work) -> Vec<Rich> {
     }
 }
 
+/// Still going on: a start and no end, or the end `present`.
+fn ongoing(start: Option<&str>, end: Option<&str>) -> bool {
+    end == Some("present") || (end.is_none() && start.is_some_and(|s| !s.is_empty()))
+}
+
 fn inlines(items: &[String]) -> Vec<Rich> {
     items.iter().map(|h| inline(Some(h))).collect()
 }
 
-fn work(w: &model::Work, previous: Option<&model::Work>) -> Entry {
+fn work(w: &model::Work, previous: Option<&model::Work>, words: &CvLocale) -> Entry {
     let same_employer = previous.is_some_and(|p| same(p.name.as_deref(), w.name.as_deref()));
     let description = if same_employer
         && previous.is_some_and(|p| same(p.description.as_deref(), w.description.as_deref()))
@@ -241,36 +234,46 @@ fn work(w: &model::Work, previous: Option<&model::Work>) -> Entry {
         subtitle: keep(w.name.as_deref()),
         subtitle_url: href(w.url.as_deref()),
         meta: vec![meta_line([
-            date_item(dates::range(w.start_date.as_deref(), w.end_date.as_deref())),
+            date_item(dates::range(
+                w.start_date.as_deref(),
+                w.end_date.as_deref(),
+                words,
+            )),
             place(w.location.as_deref()),
             None,
         ])],
         paragraphs: paras,
         bullets: inlines(&w.highlights),
         same_employer,
+        current: ongoing(w.start_date.as_deref(), w.end_date.as_deref()),
         ..Entry::default()
     }
 }
 
-fn volunteer(v: &model::Volunteer) -> Entry {
+fn volunteer(v: &model::Volunteer, words: &CvLocale) -> Entry {
     Entry {
         title: keep(v.position.as_deref()),
         subtitle: keep(v.organization.as_deref()),
         subtitle_url: href(v.url.as_deref()),
         meta: vec![meta_line([
-            date_item(dates::range(v.start_date.as_deref(), v.end_date.as_deref())),
+            date_item(dates::range(
+                v.start_date.as_deref(),
+                v.end_date.as_deref(),
+                words,
+            )),
             place(v.location.as_deref()),
             None,
         ])],
+        current: ongoing(v.start_date.as_deref(), v.end_date.as_deref()),
         paragraphs: paragraphs(v.summary.as_deref()),
         bullets: inlines(&v.highlights),
         ..Entry::default()
     }
 }
 
-fn education(e: &model::Education) -> Entry {
+fn education(e: &model::Education, words: &CvLocale) -> Entry {
     let title = match (e.study_type.as_deref(), e.area.as_deref()) {
-        (Some(t), Some(a)) => Some(format!("{t} in {a}")),
+        (Some(t), Some(a)) => Some(words.degree(t, a)),
         (t, a) => t.or(a).map(str::to_string),
     };
     let score = e.score.as_deref().map(|s| MetaItem::new("award", s, None));
@@ -279,17 +282,22 @@ fn education(e: &model::Education) -> Entry {
         subtitle: keep(e.institution.as_deref()),
         subtitle_url: href(e.url.as_deref()),
         meta: vec![meta_line([
-            date_item(dates::range(e.start_date.as_deref(), e.end_date.as_deref())),
+            date_item(dates::range(
+                e.start_date.as_deref(),
+                e.end_date.as_deref(),
+                words,
+            )),
             place(e.location.as_deref()),
             score,
         ])],
+        current: ongoing(e.start_date.as_deref(), e.end_date.as_deref()),
         bullets: inlines(&e.highlights),
         tags: (!e.courses.is_empty()).then(|| keep_str(&e.courses.join(", "))),
         ..Entry::default()
     }
 }
 
-fn project(p: &model::Project) -> Entry {
+fn project(p: &model::Project, words: &CvLocale) -> Entry {
     let roles = p.roles.join(", ");
     let subtitle: Vec<&str> = [Some(roles.as_str()), p.entity.as_deref()]
         .into_iter()
@@ -297,7 +305,11 @@ fn project(p: &model::Project) -> Entry {
         .filter(|x| !x.is_empty())
         .collect();
     let mut meta = vec![meta_line([
-        date_item(dates::range(p.start_date.as_deref(), p.end_date.as_deref())),
+        date_item(dates::range(
+            p.start_date.as_deref(),
+            p.end_date.as_deref(),
+            words,
+        )),
         None,
         None,
     ])];
@@ -336,9 +348,9 @@ fn line(title: &str, url: Option<&str>, details: &[Option<&str>], summary: Optio
     }
 }
 
-fn publication(p: &model::Publication) -> Entry {
+fn publication(p: &model::Publication, words: &CvLocale) -> Entry {
     let mut meta = vec![meta_line([
-        date_item(dates::date(p.release_date.as_deref())),
+        date_item(dates::date(p.release_date.as_deref(), words)),
         None,
         None,
     ])];
@@ -444,20 +456,19 @@ pub fn build_header(cv: &Cv, layout: &HeaderLayout, photo: Option<String>) -> He
     }
 }
 
-/// Every non-empty section, by id, in the original's order.
+/// Every non-empty section, by id, in the original's order, in `words`' language (headings,
+/// dates): `titles` over the language's own headings.
 pub fn build_sections(
     cv: &Cv,
     titles: &IndexMap<String, String>,
     header_profiles: &[String],
+    words: &CvLocale,
 ) -> IndexMap<&'static str, Section> {
     let title = |id: &str| -> String {
-        titles.get(id).cloned().unwrap_or_else(|| {
-            DEFAULT_TITLES
-                .iter()
-                .find(|(k, _)| *k == id)
-                .map(|(_, t)| (*t).to_string())
-                .unwrap_or_default()
-        })
+        titles
+            .get(id)
+            .cloned()
+            .unwrap_or_else(|| words.title(id).unwrap_or_default().to_string())
     };
     let in_header: Vec<String> = header_profiles.iter().map(|n| n.to_lowercase()).collect();
     let mut raw: Vec<(&'static str, &'static str, Vec<Item>)> = Vec::with_capacity(14);
@@ -476,7 +487,7 @@ pub fn build_sections(
         cv.work
             .iter()
             .enumerate()
-            .map(|(n, w)| Item::Entry(work(w, n.checked_sub(1).map(|p| &cv.work[p]))))
+            .map(|(n, w)| Item::Entry(work(w, n.checked_sub(1).map(|p| &cv.work[p]), words)))
             .collect(),
     ));
     raw.push((
@@ -484,7 +495,7 @@ pub fn build_sections(
         "entry",
         cv.volunteer
             .iter()
-            .map(|v| Item::Entry(volunteer(v)))
+            .map(|v| Item::Entry(volunteer(v, words)))
             .collect(),
     ));
     raw.push((
@@ -492,7 +503,7 @@ pub fn build_sections(
         "entry",
         cv.education
             .iter()
-            .map(|e| Item::Entry(education(e)))
+            .map(|e| Item::Entry(education(e, words)))
             .collect(),
     ));
     raw.push((
@@ -500,7 +511,7 @@ pub fn build_sections(
         "entry",
         cv.projects
             .iter()
-            .map(|p| Item::Entry(project(p)))
+            .map(|p| Item::Entry(project(p, words)))
             .collect(),
     ));
     raw.push((
@@ -538,7 +549,7 @@ pub fn build_sections(
         "entry",
         cv.publications
             .iter()
-            .map(|p| Item::Entry(publication(p)))
+            .map(|p| Item::Entry(publication(p, words)))
             .collect(),
     ));
     // The original's sidebar finds a group by comparing its escaped name to the CV's names, so

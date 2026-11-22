@@ -1,14 +1,20 @@
 //! Display formatting for the partial ISO dates of the CV format (port of `dates.py`).
 
 use crate::pyfmt;
+use crate::wording::CvLocale;
 
 pub const MONTHS: [&str; 12] = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-/// `2019` -> `2019`; `2019-07` and `2019-07-15` -> `Jul 2019`. Errors as Python raises them
-/// (`ValueError`, `IndexError`) for months a validated CV never has.
-pub fn format_date(value: Option<&str>) -> Result<String, String> {
+/// `2019` -> `2019`; `2019-07` and `2019-07-15` -> `Jul 2019` (`07/2019` when `numeric`);
+/// `months`: the twelve names in the CV's language. Errors as Python raises them (`ValueError`,
+/// `IndexError`) for months a validated CV never has.
+pub fn format_date(
+    value: Option<&str>,
+    months: &[&str; 12],
+    numeric: bool,
+) -> Result<String, String> {
     let Some(value) = value.filter(|v| !v.is_empty()) else {
         return Ok(String::new());
     };
@@ -17,10 +23,14 @@ pub fn format_date(value: Option<&str>) -> Result<String, String> {
     let Some(month) = parts.next() else {
         return Ok(year.to_string());
     };
-    let index = pyfmt::int(month)? - 1;
+    let number = pyfmt::int(month)?;
+    if numeric {
+        return Ok(format!("{number:02}/{year}"));
+    }
+    let index = number - 1;
     // Python indexes a tuple from its end for -12..=-1.
     let index = if index < 0 { index + 12 } else { index };
-    match usize::try_from(index).ok().and_then(|i| MONTHS.get(i)) {
+    match usize::try_from(index).ok().and_then(|i| months.get(i)) {
         Some(name) => Ok(format!("{name} {year}")),
         None => Err("IndexError: tuple index out of range".into()),
     }
@@ -34,13 +44,15 @@ pub fn format_range(
     ongoing_if_no_end: bool,
     present: &str,
     separator: &str,
+    months: &[&str; 12],
+    numeric: bool,
 ) -> Result<String, String> {
-    let first = format_date(start)?;
+    let first = format_date(start, months, numeric)?;
     let started = start.is_some_and(|s| !s.is_empty());
     let last = if end == Some("present") || (end.is_none() && started && ongoing_if_no_end) {
         present.to_string()
     } else {
-        format_date(end)?
+        format_date(end, months, numeric)?
     };
     if first.is_empty() {
         return Ok(if last != present { last } else { String::new() });
@@ -51,16 +63,25 @@ pub fn format_range(
     Ok(format!("{first}{separator}{last}"))
 }
 
-/// `format_range` with the defaults every caller uses.
-pub fn range(start: Option<&str>, end: Option<&str>) -> String {
+/// `format_range` in the CV's words (`present`, separator, months).
+pub fn range(start: Option<&str>, end: Option<&str>, w: &CvLocale) -> String {
     // INFALLIBLE: validated CV dates always have a month in 01..=12.
-    format_range(start, end, true, "Present", " - ").unwrap_or_default()
+    format_range(
+        start,
+        end,
+        true,
+        w.present,
+        w.separator,
+        &w.months,
+        w.numeric,
+    )
+    .unwrap_or_default()
 }
 
-/// `format_date` for validated dates.
-pub fn date(value: Option<&str>) -> String {
+/// `format_date` for validated dates, in the CV's words.
+pub fn date(value: Option<&str>, w: &CvLocale) -> String {
     // INFALLIBLE: validated CV dates always have a month in 01..=12.
-    format_date(value).unwrap_or_default()
+    format_date(value, &w.months, w.numeric).unwrap_or_default()
 }
 
 #[cfg(test)]
@@ -69,14 +90,20 @@ mod tests {
 
     #[test]
     fn dates() {
-        assert_eq!(format_date(Some("2019")).as_deref(), Ok("2019"));
-        assert_eq!(format_date(Some("2019-07-15")).as_deref(), Ok("Jul 2019"));
-        assert_eq!(format_date(Some("2019-00")).as_deref(), Ok("Dec 2019"));
-        assert!(format_date(Some("2019-13")).is_err());
-        assert_eq!(range(Some("2019-07"), None), "Jul 2019 - Present");
-        assert_eq!(range(Some("2019-07"), Some("2019-07")), "Jul 2019");
-        assert_eq!(range(None, Some("present")), "");
-        assert_eq!(range(None, Some("2020")), "2020");
-        assert_eq!(range(None, None), "");
+        let en = CvLocale::default();
+        let date = |v| format_date(Some(v), &MONTHS, false);
+        assert_eq!(date("2019").as_deref(), Ok("2019"));
+        assert_eq!(date("2019-07-15").as_deref(), Ok("Jul 2019"));
+        assert_eq!(date("2019-00").as_deref(), Ok("Dec 2019"));
+        assert!(date("2019-13").is_err());
+        assert_eq!(
+            format_date(Some("2019-07-15"), &MONTHS, true).as_deref(),
+            Ok("07/2019")
+        );
+        assert_eq!(range(Some("2019-07"), None, &en), "Jul 2019 - Present");
+        assert_eq!(range(Some("2019-07"), Some("2019-07"), &en), "Jul 2019");
+        assert_eq!(range(None, Some("present"), &en), "");
+        assert_eq!(range(None, Some("2020"), &en), "2020");
+        assert_eq!(range(None, None, &en), "");
     }
 }

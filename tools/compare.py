@@ -39,7 +39,8 @@ def run(cmd, env=None):
     return p.stdout.strip() + (" | " + p.stderr.strip().replace("\n", " | ") if p.stderr.strip() else "")
 
 
-env = dict(os.environ, PYTHONPATH=str(HERE / "original/src"))
+# CVBUILDER_SRC: another cv-builder to compare with (career-ledger's own, for what it learned since).
+env = dict(os.environ, PYTHONPATH=os.environ.get("CVBUILDER_SRC", str(HERE / "original/src")))
 print("cv-builder:", run([str(VENV), "-m", "cv_builder", "build", cv, "-t", template, "-o", str(out / "py.pdf"), *extra], env))
 print("cv-forge:  ", run([FORGE, "build", cv, "-t", str(HERE / "templates" / template), "-o", str(out / "rs.pdf"), *extra]))
 

@@ -12,7 +12,8 @@ ADR-001 tool and snapshot · 002 rendering = PDF to image · 003 Typst replaces 
 markers · 012 interpolated fit · 013 batch across processes · 014 program name `cv-builder`
 until the cutover · 015 original's crash cases · 016 classic signed off · 017 no-break text ·
 018 the five other templates signed off · 019 no-break boxes measured
-only when needed · 020 page numbers from the plan · 021 thumbnails from the layout
+only when needed · 020 page numbers from the plan · 021 thumbnails from the layout · 022 Python
+modules · 023 CVs in French, German and other languages
 
 ## Units
 
@@ -20,6 +21,7 @@ only when needed · 020 page numbers from the plan · 021 thumbnails from the la
 | --- | --- | --- |
 | `dates.py` | done | unit cases (format_date, format_range), gate passed |
 | `view.py` text helpers (keep, inline, paragraphs, pretty_url, href, language_rating) | done | unit cases, gate passed |
+| `wording.py` (career-ledger 8453c9a: headings, months, "Present" per language) | done | unit tests; `tools/compare.py` fr/de word for word, all six templates; auto-apply's engine tests |
 | `icons.py` network_icon | done | unit cases, gate passed |
 | `icons.py` icon (SVG) | replaced | Typst templates draw icons themselves |
 | `view.py` builders (header, sections, split_entries) | done | build cases (replay) |

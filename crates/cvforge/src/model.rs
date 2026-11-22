@@ -137,6 +137,9 @@ struct Spec {
 const CONTACTS: &[&str] = &["phone", "email", "url", "location"];
 const PAGE_SIZES: &[&str] = &["A4", "Letter"];
 const HEX_COLOR: &str = r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$";
+/// A BCP-47 tag: `en`, `fr`, `de-AT`, `zh-Hant-TW`.
+const LANGUAGE_TAG: &str = r"^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$";
+const DATE_STYLES: &[&str] = &["month", "numeric"];
 const STR_LIST: Kind = Kind::List(&Kind::Str);
 
 static LOCATION: Spec = Spec {
@@ -364,6 +367,8 @@ static LAYOUT: Spec = Spec {
         def("titles", Kind::DictLitKeys(&SECTION_IDS, &Kind::Str)),
         def("header", Kind::Model(&HEADER_LAYOUT)),
         opt("documentTitle", Kind::Str),
+        opt("language", Kind::Pattern(LANGUAGE_TAG)),
+        opt("dateStyle", Kind::Lit(DATE_STYLES)),
     ],
     strict: true,
     after: Some(no_duplicate_sections),
@@ -402,6 +407,8 @@ static DATE_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$").expect("static regex")
 });
 static HEX_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(HEX_COLOR).expect("static regex"));
+static LANGUAGE_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(LANGUAGE_TAG).expect("static regex"));
 
 fn check_date(value: &str) -> Result<(), String> {
     if DATE_RE.is_match(value) {
@@ -623,7 +630,12 @@ impl Walker {
             },
             Kind::Pattern(pattern) => {
                 let s = self.string(v, strip)?;
-                if HEX_RE.is_match(&s) {
+                let re: &Regex = if pattern == LANGUAGE_TAG {
+                    &LANGUAGE_RE
+                } else {
+                    &HEX_RE
+                };
+                if re.is_match(&s) {
                     Some(Value::String(s))
                 } else {
                     self.push(format!("String should match pattern '{pattern}'"));
@@ -971,6 +983,11 @@ pub struct Layout {
     pub header: HeaderSet,
     #[serde(rename = "documentTitle")]
     pub document_title: Option<String>,
+    /// The CV's language (a BCP-47 tag): headings, month names and "Present" follow it.
+    pub language: Option<String>,
+    /// Months as names (`month`) or numbers (`numeric`); `None`: numbers in German.
+    #[serde(rename = "dateStyle")]
+    pub date_style: Option<String>,
 }
 
 /// A validated CV document.

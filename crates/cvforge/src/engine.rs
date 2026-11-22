@@ -69,6 +69,16 @@ impl Engine {
             .sum()
     }
 
+    /// Whether every bundled font has a glyph for each character of `text` (else Typst would
+    /// fall back to another bundled font, or draw nothing, where cv-builder takes a system font).
+    pub fn covers(&self, text: &str) -> bool {
+        text.chars().filter(|c| !c.is_whitespace()).all(|c| {
+            self.instances
+                .iter()
+                .all(|i| i.ttf().glyph_index(c).is_some())
+        })
+    }
+
     /// The process-wide engine.
     pub fn get() -> &'static Engine {
         static ENGINE: OnceLock<Engine> = OnceLock::new();

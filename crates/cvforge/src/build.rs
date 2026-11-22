@@ -30,6 +30,7 @@ use crate::template::{Margins, Template};
 use crate::view::{
     Header, HeaderLayout, Item, Section, build_header, build_sections, split_entries,
 };
+use crate::wording::{CvLocale, cv_locale};
 
 pub const PT_TO_PX: f64 = 4.0 / 3.0;
 /// Fitting never sets text line spacing below this (the low end of the usual 1.15 to 1.5).
@@ -74,6 +75,8 @@ pub struct Settings {
     pub titles: IndexMap<String, String>,
     pub document_title: String,
     pub header: HeaderLayout,
+    /// The CV's language: headings, months, "Present" (`layout.language`, `layout.dateStyle`).
+    pub wording: CvLocale,
 }
 
 /// `layout.header`, with the template's defaults for the fields the CV leaves out.
@@ -189,7 +192,8 @@ pub fn resolve_settings(
     }
     let header = resolve_header(cv, &template);
     let placed: Vec<&String> = columns.values().flatten().collect();
-    let sections = build_sections(cv, &IndexMap::new(), &header.profiles);
+    let wording = cv_locale(layout.language.as_deref(), layout.date_style.as_deref());
+    let sections = build_sections(cv, &IndexMap::new(), &header.profiles, &wording);
     for sid in SECTION_IDS {
         if sections.contains_key(sid) && !placed.iter().any(|p| *p == sid) {
             notes.push(format!(
@@ -225,8 +229,9 @@ pub fn resolve_settings(
         document_title: layout
             .document_title
             .clone()
-            .unwrap_or_else(|| format!("{} - CV", cv.basics.name)),
+            .unwrap_or_else(|| format!("{} - {}", cv.basics.name, wording.cv_word)),
         header,
+        wording,
         template,
     };
     Ok((settings, notes))
@@ -496,6 +501,11 @@ struct DocData<'a> {
     page: Geometry,
     accent: &'a str,
     title: &'a str,
+    /// Typst's `lang` (the primary subtag) and `region` (a two-letter region subtag, if any).
+    lang: String,
+    region: Option<String>,
+    /// The CV's words the templates print themselves ("continued").
+    words: &'a CvLocale,
     author: &'a str,
     description: Option<String>,
     metrics: IndexMap<&'a str, [f64; 2]>,
@@ -577,7 +587,12 @@ impl Builder {
                 pyfmt::repr(&template.name)
             )));
         }
-        let mut sections = build_sections(&cv, &settings.titles, &settings.header.profiles);
+        let mut sections = build_sections(
+            &cv,
+            &settings.titles,
+            &settings.header.profiles,
+            &settings.wording,
+        );
         if template.config.split_entries {
             sections = sections
                 .into_iter()
@@ -725,6 +740,9 @@ impl Builder {
             },
             accent: &self.settings.accent,
             title: &self.settings.document_title,
+            lang: self.settings.wording.base(),
+            region: self.settings.wording.region(),
+            words: &self.settings.wording,
             author: &self.cv.basics.name,
             description: self.cv.basics.label.clone(),
             metrics: Engine::get()

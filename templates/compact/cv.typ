@@ -19,7 +19,7 @@
 #let lines(v, family: sans) = line-box(family, lh(v))
 
 #set document(title: data.title, author: data.author, description: data.description)
-#set text(font: sans, size: 10pt, fill: ink, lang: "en", hyphenate: false, ..lines(1.23))
+#set text(font: sans, size: 10pt, fill: ink, lang: data.lang, region: data.region, hyphenate: false, ..lines(1.23))
 #set par(leading: 0pt, spacing: 0pt, justify: false)
 #set block(spacing: 0pt)
 #show heading: it => it.body

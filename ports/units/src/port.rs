@@ -10,7 +10,7 @@ use cvforge::{dates, text, view};
 
 /// Port of `format_date` (`src/cv_builder/dates.py:8`).
 pub fn format_date(value: Option<String>) -> Result<String, String> {
-    dates::format_date(value.as_deref())
+    dates::format_date(value.as_deref(), &dates::MONTHS, false)
 }
 
 /// Port of `format_range` (`src/cv_builder/dates.py:18`).
@@ -27,6 +27,8 @@ pub fn format_range(
         ongoing_if_no_end,
         &present,
         &separator,
+        &dates::MONTHS,
+        false,
     )
 }
 

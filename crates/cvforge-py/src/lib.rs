@@ -180,6 +180,9 @@ fn _cvforge(m: &Bound<'_, PyModule>) -> PyResult<()> {
         "ENGINE",
         concat!("cv-forge ", env!("CARGO_PKG_VERSION"), " (Typst 0.15)"),
     )?;
+    // The languages a CV may be in (layout.language's primary subtag) for cv-forge to print it as
+    // cv-builder does: English, French and German in full, then every one CLDR has months for.
+    m.add("LANGUAGES", cvforge::wording::languages())?;
     m.add("RenderError", m.py().get_type::<RenderError>())?;
     m.add_function(wrap_pyfunction!(build, m)?)?;
     m.add_function(wrap_pyfunction!(fewest_pages, m)?)?;

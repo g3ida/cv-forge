@@ -335,7 +335,7 @@ const CEFR: [(&str, u8); 6] = [
     ("c1", 4),
     ("c2", 5),
 ];
-const FLUENCY_WORDS: [(&str, u8); 15] = [
+const FLUENCY_WORDS: [(&str, u8); 30] = [
     ("native", 5),
     ("mother", 5),
     ("bilingual", 5),
@@ -351,6 +351,22 @@ const FLUENCY_WORDS: [(&str, u8); 15] = [
     ("limited", 2),
     ("basic", 1),
     ("beginner", 1),
+    // French and German, as a CV in those languages prints them
+    ("maternelle", 5),
+    ("bilingue", 5),
+    ("muttersprache", 5),
+    ("zweisprachig", 5),
+    ("courant", 4),
+    ("avancé", 4),
+    ("fließend", 4),
+    ("verhandlungssicher", 4),
+    ("fortgeschritten", 4),
+    ("intermédiaire", 3),
+    ("mittelstufe", 3),
+    ("élémentaire", 2),
+    ("grundkenntnisse", 2),
+    ("débutant", 1),
+    ("anfänger", 1),
 ];
 static CEFR_RE: LazyLock<Vec<Regex>> = LazyLock::new(|| {
     CEFR.iter()
@@ -494,6 +510,9 @@ mod tests {
         assert_eq!(language_rating(Some("B1 (intermediate)"), None), 3);
         assert_eq!(language_rating(None, Some(2)), 2);
         assert_eq!(language_rating(Some("??"), None), 0);
+        assert_eq!(language_rating(Some("Langue maternelle"), None), 5);
+        assert_eq!(language_rating(Some("Intermédiaire avancé"), None), 4);
+        assert_eq!(language_rating(Some("Anfänger"), None), 1);
     }
 
     #[test]

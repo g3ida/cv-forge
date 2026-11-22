@@ -29,7 +29,7 @@
 #let fixed-lines(height, size, family: sans) = line-box(family, height / size)
 
 #set document(title: data.title, author: data.author, description: data.description)
-#set text(font: sans, size: 10pt, fill: ink, lang: "en", hyphenate: false, ..lines(1.4))
+#set text(font: sans, size: 10pt, fill: ink, lang: data.lang, region: data.region, hyphenate: false, ..lines(1.4))
 #set par(leading: 0pt, spacing: 0pt, justify: false)
 #set block(spacing: 0pt)
 #show heading: it => it.body
@@ -232,7 +232,7 @@
         // "continued" sits at the end of a repeated title, over its hairline; no height.
         if d.continued and it.first and titled {
           place(top + right, dy: -19pt, box(fill: if side { band } else { white }, inset: (left: 6pt),
-            text(size: 10pt, fill: muted, ..fixed-lines(12pt, 10pt), [continued])))
+            text(size: 10pt, fill: muted, ..fixed-lines(12pt, 10pt), data.words.continued)))
         }
         if side { entry-side(d) } else { entry-main(d) }
       })

@@ -21,7 +21,7 @@
 #let lines(v, family: sans) = line-box(family, lh(v))
 
 #set document(title: data.title, author: data.author, description: data.description)
-#set text(font: sans, size: 10pt, fill: ink, lang: "en", ligatures: false, hyphenate: false, ..lines(1.38))
+#set text(font: sans, size: 10pt, fill: ink, lang: data.lang, region: data.region, ligatures: false, hyphenate: false, ..lines(1.38))
 #set par(leading: 0pt, spacing: 0pt, justify: false)
 #set block(spacing: 0pt)
 #show heading: it => it.body
@@ -77,7 +77,7 @@
   let dates = meta.filter(x => x.icon == "calendar")
   let places = meta.filter(x => x.icon == "pin")
   let rest = meta.filter(x => x.icon not in ("pin", "calendar"))
-  let current = dates.len() > 0 and dates.last().text.ends-with("Present")
+  let current = e.current
   let when = block(width: 112pt, inset: (top: pad), align(right, {
     if dates.len() > 0 {
       pad-top(2.2pt, text(size: 10pt, weight: 500, number-width: "tabular", fill: muted, ..lines(1.3),

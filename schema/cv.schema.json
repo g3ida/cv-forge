@@ -635,6 +635,37 @@
           "default": null,
           "description": "PDF document title metadata.",
           "title": "Documenttitle"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The CV's language, a BCP-47 tag such as en, fr or de: headings, month names and \"Present\" follow it (English, French and German in full; month names for any other).",
+          "title": "Language"
+        },
+        "dateStyle": {
+          "anyOf": [
+            {
+              "enum": [
+                "month",
+                "numeric"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Months as names (Mar 2021) or numbers (03/2021). Default: numbers in German, names otherwise.",
+          "title": "Datestyle"
         }
       },
       "title": "Layout",

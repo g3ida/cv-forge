@@ -19,7 +19,7 @@
 #let lines(v, family: sans) = line-box(family, lh(v))
 
 #set document(title: data.title, author: data.author, description: data.description)
-#set text(font: sans, size: 10pt, fill: ink, lang: "en", ligatures: false, hyphenate: false, ..lines(1.36))
+#set text(font: sans, size: 10pt, fill: ink, lang: data.lang, region: data.region, ligatures: false, hyphenate: false, ..lines(1.36))
 #set par(leading: 0pt, spacing: 0pt, justify: false)
 #set block(spacing: 0pt)
 // Headings carry the PDF structure; their look is set inside each body.
