@@ -1,0 +1,45 @@
+{
+  "name": "awesome",
+  "label": "Awesome",
+  "description": "A confident one-column page in red and charcoal: the surname in bold beside a lighter first name, headings whose first letters carry the accent, and a rule running to the margin; resume parsers still read it in order.",
+  "readingOrder": true,
+  "pageSize": "A4",
+  "margins": {
+    "top": 36,
+    "right": 44,
+    "bottom": 36,
+    "left": 44
+  },
+  "accentColor": "#C8372D",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

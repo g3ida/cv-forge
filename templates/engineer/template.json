@@ -1,0 +1,46 @@
+{
+  "name": "engineer",
+  "label": "Engineer",
+  "description": "Dense black-and-white page in the style engineers trade: a centered name, small-capital headings over a full rule and each role headed by its title and employer on one line, in one column that resume parsers read in order.",
+  "readingOrder": true,
+  "pageSize": "A4",
+  "margins": {
+    "top": 34,
+    "right": 40,
+    "bottom": 34,
+    "left": 40
+  },
+  "accentColor": "#1A1A1A",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*",
+    "photo": false
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

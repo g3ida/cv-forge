@@ -16,7 +16,7 @@
 #let line-ink = rgb("#c3c8ce")
 #let rule-ink = rgb("#d3d7dc")
 #let sans = "Inter"
-#let display = "Rubik"
+#let display = "Noto Serif Display"
 #let width = (data.page.width - m.left - m.right) * 1pt
 #let lines(v, family: sans) = line-box(family, lh(v))
 
@@ -38,7 +38,7 @@
 }).join())
 
 #let header-text() = {
-  block(width: 100%, heading(level: 1, text(font: display, size: 26.5pt, weight: 500, fill: heading-ink, ..lines(1.15, family: display), data.header.name)))
+  block(width: 100%, heading(level: 1, text(font: display, size: 26.5pt, weight: 400, fill: heading-ink, ..lines(1.15, family: display), data.header.name)))
   if not blank(data.header.label) {
     pad-top(5pt, text(size: 11.5pt, weight: 500, fill: accent, ..lines(1.3), rich(data.header.label)))
   }
@@ -64,7 +64,7 @@
   align: horizon,
   [],
   box(width: 5pt, height: 5pt, fill: accent),
-  heading(level: 2, text(font: display, size: 13pt, weight: 500, fill: accent, ..lines(1.2, family: display), chunk.title)),
+  heading(level: 2, text(font: display, size: 13pt, weight: 400, fill: accent, ..lines(1.2, family: display), chunk.title)),
   block(width: 100%, height: 0.6pt, fill: rule-ink),
 ))
 

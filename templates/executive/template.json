@@ -1,0 +1,45 @@
+{
+  "name": "executive",
+  "label": "Executive",
+  "description": "Understated serif-and-sans page in forest green for senior roles: a display-serif name, the summary set as an opening paragraph and quiet headings, in one column that resume parsers read in order.",
+  "readingOrder": true,
+  "pageSize": "A4",
+  "margins": {
+    "top": 44,
+    "right": 52,
+    "bottom": 42,
+    "left": 52
+  },
+  "accentColor": "#1F4D3A",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": false,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

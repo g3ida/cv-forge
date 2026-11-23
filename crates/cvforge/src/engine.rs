@@ -35,6 +35,12 @@ const FONT_FILES: &[&[u8]] = fonts![
     "Rubik-Regular.ttf",
     "Rubik-Medium.ttf",
     "Rubik-Bold.ttf",
+    "NotoSans-Regular.ttf",
+    "NotoSans-Italic.ttf",
+    "NotoSans-Bold.ttf",
+    "NotoSans-BoldItalic.ttf",
+    "NotoSerifDisplay-Regular.ttf",
+    "NotoSerifDisplay-Italic.ttf",
 ];
 
 pub struct Engine {

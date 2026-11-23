@@ -1,0 +1,38 @@
+{
+  "name": "contrast",
+  "label": "Contrast",
+  "description": "Bold two-column page with a dark full-height band on the right for the photo, skills and languages, and amber accents; made for people reading it (email, interviews, direct applications) rather than for resume parsers.",
+  "readingOrder": false,
+  "pageSize": "A4",
+  "margins": {
+    "top": 36,
+    "right": 30,
+    "bottom": 36,
+    "left": 40
+  },
+  "accentColor": "#D4943A",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "projects",
+      "volunteer",
+      "publications",
+      "references"
+    ],
+    "side": [
+      "skills",
+      "languages",
+      "certificates",
+      "awards",
+      "achievements",
+      "interests",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "repeatTitles": true,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

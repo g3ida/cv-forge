@@ -221,3 +221,21 @@ checks; Turkish headings differed, hence the list above). The recorded cases are
 English and unchanged. Regenerate `months.rs` when career-ledger's Babel changes. Spanish,
 Portuguese, Polish and Czech CVs stay on cv-builder until cv-forge either follows WeasyPrint's
 hyphen (Typst has no switch for it) or cv-builder follows Typst's.
+
+## ADR-024: Templates cv-builder gained after the snapshot
+Status: accepted (2026-11-23)
+Context: cv-builder (career-ledger 20429fc) bundles five more templates: engineer, awesome and
+executive (reading order) and grid and contrast (for people), with Noto Sans and Noto Serif
+Display. It also gave classic, modern, sidebar and timeline their own default colours, Rubik
+headings to modern and Noto Serif Display headings to timeline. career-ledger drew the new
+templates with cv-builder in every mode, since cv-forge did not have them.
+Decision: Port each from career-ledger's cv-builder (not from `original/`, which predates them),
+box for box like the first six: `templates/<name>/cv.typ` plus the original's `template.json`,
+both fonts embedded, and the four changed `template.json` files copied as they are. The Python
+module exposes `TEMPLATES`, the bundled names; career-ledger draws with cv-forge only the
+templates listed there.
+Consequences: All eleven templates match cv-builder word for word and page for page on the
+example, with and without its own layout (`CVBUILDER_SRC=<career-ledger>/cv-builder/src
+tools/compare.py <template>`), and career-ledger's engine tests compare all eleven. Adding the
+two fonts leaves `LANGUAGES` as it was (403 codes). Eleven recorded cases now list eleven
+templates where they listed six (`cases/known-diffs.md`).

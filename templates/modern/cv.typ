@@ -18,8 +18,9 @@
 // The contacts strip: a 92% white veil over the accent colour.
 #let tint = color.mix((accent, 8%), (white, 92%), space: rgb)
 #let sans = "Inter"
+#let display = "Rubik"
 #let width = (data.page.width - m.left - m.right) * 1pt
-#let lines(v) = line-box(sans, lh(v))
+#let lines(v, family: sans) = line-box(family, lh(v))
 
 #set document(title: data.title, author: data.author, description: data.description)
 #set text(font: sans, size: 10pt, fill: ink, lang: data.lang, region: data.region, ligatures: false, hyphenate: false, ..lines(1.37))
@@ -39,7 +40,7 @@
 })
 
 #let band-text() = {
-  block(width: 100%, heading(level: 1, text(size: 28pt, weight: 700, fill: white, ..lines(1.15), data.header.name)))
+  block(width: 100%, heading(level: 1, text(font: display, size: 28pt, weight: 700, fill: white, ..lines(1.15, family: display), data.header.name)))
   if not blank(data.header.label) {
     pad-top(6pt, text(size: 13pt, fill: white.transparentize(10%), ..lines(1.3), rich(data.header.label)))
   }
@@ -69,7 +70,7 @@
   column-gutter: (7pt, 9pt),
   align: horizon,
   box(width: 7pt, height: 7pt, radius: 1.5pt, fill: accent),
-  heading(level: 2, text(size: 13pt, weight: 700, fill: accent, ..lines(1.25), chunk.title)),
+  heading(level: 2, text(font: display, size: 13pt, weight: 500, fill: accent, ..lines(1.25, family: display), chunk.title)),
   block(width: 100%, height: 0.75pt, fill: rule-ink),
 ))
 

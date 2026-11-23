@@ -9,11 +9,12 @@
     problems(cv_json) -> list[str]     validation problems, as cv-builder words them
     LANGUAGES: list[str]               layout.language codes printed as cv-builder prints them
                                        ("en", "fr", "de" in full; the rest: CLDR month names)
+    TEMPLATES: list[str]               the bundled templates' names
 
 An invalid CV raises ValueError (cv-builder: pydantic's ValidationError, also a ValueError); a
 CV that cannot be built raises RenderError. The GIL is released while a CV is typeset.
 """
 
-from ._cvforge import ENGINE, LANGUAGES, RenderError, __version__, build, fewest_pages, fit, problems
+from ._cvforge import ENGINE, LANGUAGES, TEMPLATES, RenderError, __version__, build, fewest_pages, fit, problems
 
-__all__ = ["ENGINE", "LANGUAGES", "RenderError", "__version__", "build", "fewest_pages", "fit", "problems"]
+__all__ = ["ENGINE", "LANGUAGES", "TEMPLATES", "RenderError", "__version__", "build", "fewest_pages", "fit", "problems"]

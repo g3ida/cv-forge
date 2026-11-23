@@ -1,0 +1,45 @@
+{
+  "name": "grid",
+  "label": "Grid",
+  "description": "Swiss-style page on a strict grid: an oversized name, section labels in a left margin beside the text, no rules and a single orange accent; made for people to read, since resume parsers read the margin apart from its sections.",
+  "readingOrder": false,
+  "pageSize": "A4",
+  "margins": {
+    "top": 40,
+    "right": 44,
+    "bottom": 38,
+    "left": 44
+  },
+  "accentColor": "#E8590C",
+  "columns": {
+    "main": [
+      "summary",
+      "work",
+      "education",
+      "skills",
+      "projects",
+      "certificates",
+      "awards",
+      "languages",
+      "achievements",
+      "volunteer",
+      "publications",
+      "interests",
+      "references",
+      "profiles"
+    ]
+  },
+  "titles": {},
+  "header": {
+    "contacts": [
+      "email",
+      "phone",
+      "location",
+      "url"
+    ],
+    "profiles": "*"
+  },
+  "repeatTitles": true,
+  "splitEntries": true,
+  "fitTolerance": -0.1
+}

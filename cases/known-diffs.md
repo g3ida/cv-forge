@@ -25,3 +25,12 @@ a one-line error with the same exit status. stdout and status are unchanged.
 | trap-232-build | `build '' -t sidebar -o out.pdf` | `IsADirectoryError: [Errno 21] Is a directory: '.'` | `error: .: is a directory` |
 | trap-242-build | `build /home/gaida/Documents/projects/personal_2/cv-forge/examples/android-hmi-architect.json -t sidebar -o ''` | `IsADirectoryError: [Errno 21] Is a directory: '.'` | `error: .: is a directory` |
 | trap-252-build | `build '' -t timeline -o out.pdf` | `IsADirectoryError: [Errno 21] Is a directory: '.'` | `error: .: is a directory` |
+
+## Eleven templates (ADR-024, 2026-11-23)
+
+cv-builder bundles eleven templates since career-ledger 20429fc, cv-forge too; the recorded
+cases come from the snapshot with six. These cases differ only in that list: `example-008-templates`
+(stdout: the five new templates listed) and, in stderr, `unknown template '...' (available: ...)`
+naming eleven: `build-unknown-template`, `trap-149-build`, `trap-150-build`, `trap-151-build`,
+`trap-153-build`, `trap-154-build`, `trap-155-build`, `trap-156-build`, `trap-157-build`,
+`trap-158-build`.

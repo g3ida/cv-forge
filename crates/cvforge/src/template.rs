@@ -25,9 +25,14 @@ macro_rules! bundled {
 
 /// (name, template.json, cv.typ). In the original's order (sorted folder names).
 const BUNDLED: &[(&str, &str, Option<&str>)] = bundled![
+    "awesome" => Some(include_str!("../../../templates/awesome/cv.typ")),
     "classic" => Some(include_str!("../../../templates/classic/cv.typ")),
     "clear" => Some(include_str!("../../../templates/clear/cv.typ")),
     "compact" => Some(include_str!("../../../templates/compact/cv.typ")),
+    "contrast" => Some(include_str!("../../../templates/contrast/cv.typ")),
+    "engineer" => Some(include_str!("../../../templates/engineer/cv.typ")),
+    "executive" => Some(include_str!("../../../templates/executive/cv.typ")),
+    "grid" => Some(include_str!("../../../templates/grid/cv.typ")),
     "modern" => Some(include_str!("../../../templates/modern/cv.typ")),
     "sidebar" => Some(include_str!("../../../templates/sidebar/cv.typ")),
     "timeline" => Some(include_str!("../../../templates/timeline/cv.typ")),
@@ -260,7 +265,8 @@ mod tests {
         assert_eq!(
             names,
             [
-                "classic", "clear", "compact", "modern", "sidebar", "timeline"
+                "awesome", "classic", "clear", "compact", "contrast", "engineer", "executive", "grid",
+                "modern", "sidebar", "timeline"
             ]
         );
         assert_eq!(
@@ -270,7 +276,7 @@ mod tests {
         let e = Template::load(Some("nope")).expect_err("unknown");
         assert_eq!(
             e.0,
-            "unknown template 'nope' (available: classic, clear, compact, modern, sidebar, timeline)"
+            "unknown template 'nope' (available: awesome, classic, clear, compact, contrast, engineer, executive, grid, modern, sidebar, timeline)"
         );
     }
 }
