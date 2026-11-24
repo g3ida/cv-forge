@@ -1,4 +1,4 @@
-//! `cv-forge build|validate|schema|templates|init`: the command line of cv-builder, with its
+//! `cv-forge build|letter|validate|schema|templates|init`: the command line of cv-builder, with its
 //! arguments, messages and exit codes (port of `cli.py`). The parser follows argparse's rules
 //! and wording, since the recorded cases hold cv-builder's usage errors too.
 
@@ -7,7 +7,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use cvforge::model::{JSON_SCHEMA, load_cv};
-use cvforge::{Builder, Options, Template, pyfmt};
+use cvforge::{Builder, Options, Template, load_letter, pyfmt};
 
 #[global_allocator]
 static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
@@ -17,12 +17,18 @@ const PROG: &str = "cv-builder";
 const VERSION: &str = "0.1.0";
 const STARTER: &str = include_str!("../../../original/src/cv_builder/assets/starter.json");
 
-const MAIN_USAGE: &str =
-    "usage: cv-builder [-h] [--version] {build,validate,schema,templates,init} ...";
+// `letter` came after the snapshot (career-ledger's cv-builder draws cover letters), and with it
+// argparse wraps the main usage line.
+const MAIN_USAGE: &str = "usage: cv-builder [-h] [--version]
+                  {build,letter,validate,schema,templates,init} ...";
 const BUILD_USAGE: &str = "usage: cv-builder build [-h] [-o OUTPUT] [-t TEMPLATE] [--accent ACCENT]
                         [--page-size {A4,Letter}] [--html HTML]
                         [--max-pages MAX_PAGES] [-q]
                         cv";
+const LETTER_USAGE: &str =
+    "usage: cv-builder letter [-h] [-o OUTPUT] [-t TEMPLATE] [--accent ACCENT]
+                         [--page-size {A4,Letter}] [--html HTML] [-q]
+                         cv letter";
 const VALIDATE_USAGE: &str = "usage: cv-builder validate [-h] cv [cv ...]";
 const SCHEMA_USAGE: &str = "usage: cv-builder schema [-h] [-o OUTPUT]";
 const TEMPLATES_USAGE: &str = "usage: cv-builder templates [-h]";
@@ -32,8 +38,9 @@ const MAIN_HELP: &str = "
 Build a PDF CV from a JSON file.
 
 positional arguments:
-  {build,validate,schema,templates,init}
+  {build,letter,validate,schema,templates,init}
     build               render a CV JSON file to PDF
+    letter              render a cover letter in a CV's design
     validate            check CV JSON files against the schema
     schema              print the JSON Schema of the CV format
     templates           list available templates
@@ -259,17 +266,7 @@ fn cmd_build(p: &Parsed) -> Result<u8, UsageError> {
         page_size: p.get("--page-size").map(str::to_string),
         max_pages,
     };
-    let base = cv_path
-        .parent()
-        .map(|d| {
-            if d.as_os_str().is_empty() {
-                Path::new(".")
-            } else {
-                d
-            }
-        })
-        .unwrap_or(Path::new("."));
-    let base = base.canonicalize().unwrap_or_else(|_| base.to_path_buf());
+    let base = base_dir(cv_path);
     let html = p.get("--html").map(|h| PathBuf::from(pyfmt::path_str(h)));
     let thumbnail_dpi = p
         .get("--thumbnail-dpi")
@@ -327,6 +324,67 @@ fn cmd_build(p: &Parsed) -> Result<u8, UsageError> {
         ));
     }
     Ok(0)
+}
+
+/// The folder a CV's relative paths (its photo) are read from.
+fn base_dir(cv_path: &Path) -> PathBuf {
+    let base = cv_path
+        .parent()
+        .map(|d| {
+            if d.as_os_str().is_empty() {
+                Path::new(".")
+            } else {
+                d
+            }
+        })
+        .unwrap_or(Path::new("."));
+    base.canonicalize().unwrap_or_else(|_| base.to_path_buf())
+}
+
+/// `letter`: a cover letter (a letter JSON file) in the design of a CV (its header, fonts and
+/// accent). A letter longer than a page is drawn, with a warning.
+fn cmd_letter(p: &Parsed) -> u8 {
+    let shown = pyfmt::path_str(&p.positionals[0]);
+    let cv_path = Path::new(&shown);
+    let cv = match load_cv(cv_path) {
+        Ok(cv) => cv,
+        Err(e) => return fail(&e.report(&shown), 1),
+    };
+    let letter_shown = pyfmt::path_str(&p.positionals[1]);
+    let letter_path = Path::new(&letter_shown);
+    let letter = match load_letter(letter_path) {
+        Ok(l) => l,
+        Err(e) => return fail(&e.report(&letter_shown), 1),
+    };
+    let output = match p.get("--output") {
+        Some(o) => PathBuf::from(pyfmt::path_str(o)),
+        None => letter_path.with_extension("pdf"),
+    };
+    let options = Options {
+        template: p.get("--template").map(str::to_string),
+        accent: p.get("--accent").map(str::to_string),
+        page_size: p.get("--page-size").map(str::to_string),
+        max_pages: None,
+    };
+    let html = p.get("--html").map(|h| PathBuf::from(pyfmt::path_str(h)));
+    let result = Builder::new(cv, &base_dir(cv_path), &options)
+        .and_then(|mut b| b.write_letter_pdf(&letter, &output, html.as_deref()));
+    let result = match result {
+        Ok(r) => r,
+        Err(e) => return fail(&e.0, 1),
+    };
+    for note in &result.notes {
+        eprintln!("warning: {note}");
+    }
+    if !p.has("--quiet") {
+        let plural = if result.pages != 1 { "s" } else { "" };
+        println!(
+            "{} ({} page{plural})",
+            pyfmt::path_str(&output.to_string_lossy()),
+            result.pages
+        );
+    }
+    0
 }
 
 fn cmd_validate(p: &Parsed) -> u8 {
@@ -427,7 +485,7 @@ fn cmd_init(p: &Parsed) -> u8 {
 }
 
 fn run(args: &[String]) -> Result<u8, UsageError> {
-    let commands = ["build", "validate", "schema", "templates", "init"];
+    let commands = ["build", "letter", "validate", "schema", "templates", "init"];
     let main_err = |message: String| UsageError {
         usage: MAIN_USAGE,
         prog: PROG.into(),
@@ -482,6 +540,22 @@ fn run(args: &[String]) -> Result<u8, UsageError> {
                 valued(None, "--thumbnail-dpi", "DPI"),
             ],
         ),
+        "letter" => (
+            LETTER_USAGE,
+            vec![
+                valued(Some("-o"), "--output", "OUTPUT"),
+                valued(Some("-t"), "--template", "TEMPLATE"),
+                valued(None, "--accent", "ACCENT"),
+                Opt {
+                    short: None,
+                    long: "--page-size",
+                    value: Some("{A4,Letter}"),
+                    choices: Some(&["A4", "Letter"]),
+                },
+                valued(None, "--html", "HTML"),
+                flag(Some("-q"), "--quiet"),
+            ],
+        ),
         "validate" => (VALIDATE_USAGE, vec![]),
         "schema" => (SCHEMA_USAGE, vec![valued(Some("-o"), "--output", "OUTPUT")]),
         "templates" => (TEMPLATES_USAGE, vec![]),
@@ -516,6 +590,13 @@ fn run(args: &[String]) -> Result<u8, UsageError> {
             required(1, "cv")?;
             extra(1)?;
             cmd_build(&parsed)
+        }
+        "letter" => {
+            // argparse names every missing positional
+            required(1, "cv, letter")?;
+            required(2, "letter")?;
+            extra(2)?;
+            Ok(cmd_letter(&parsed))
         }
         "validate" => {
             required(1, "cv")?;

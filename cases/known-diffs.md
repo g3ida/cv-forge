@@ -34,3 +34,13 @@ cases come from the snapshot with six. These cases differ only in that list: `ex
 naming eleven: `build-unknown-template`, `trap-149-build`, `trap-150-build`, `trap-151-build`,
 `trap-153-build`, `trap-154-build`, `trap-155-build`, `trap-156-build`, `trap-157-build`,
 `trap-158-build`.
+
+## The schema's `language` and `dateStyle` (ADR-023, 2026-11-22; listed 2026-11-24)
+
+`layout.language` and `layout.dateStyle` came after the snapshot, so the JSON Schema that `schema`
+prints and `init` writes beside the CV has two more properties, in each of the two places the
+schema describes `layout`. These 23 cases differ only in those lines of `cv.schema.json` (or
+stdout): `example-001-init`, `example-009-schema`, `init`, `schema-to-file`, `schema`, `trap-001-init`, `trap-002-init`, `trap-003-init`, `trap-005-init`, `trap-006-init`, `trap-007-init`, `trap-008-init`, `trap-009-init`, `trap-010-init`, `trap-129-schema`, `trap-130-schema`, `trap-131-schema`, `trap-133-schema`, `trap-134-schema`, `trap-135-schema`, `trap-136-schema`, `trap-137-schema`, `trap-138-schema`.
+
+With these and the eleven above, the whole-app replay gives 274/308 (2026-11-24, with the
+`letter` command added: no recorded case prints the main usage, so none changed with it).

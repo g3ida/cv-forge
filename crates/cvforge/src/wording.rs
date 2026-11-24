@@ -170,11 +170,7 @@ impl CvLocale {
 
     /// A two-letter region subtag (`AT` for `de-AT`), uppercased: what Typst takes as `region`.
     pub fn region(&self) -> Option<String> {
-        self.lang
-            .split('-')
-            .skip(1)
-            .find(|t| t.len() == 2 && t.chars().all(|c| c.is_ascii_alphabetic()))
-            .map(str::to_uppercase)
+        region(&self.lang)
     }
 
     /// The heading of section `id` in this language.
@@ -206,8 +202,17 @@ impl CvLocale {
     }
 }
 
-fn base(lang: &str) -> String {
+/// The primary subtag of a language tag (`de` for `de-AT`), lowercased: Typst's `lang`.
+pub fn base(lang: &str) -> String {
     lang.split('-').next().unwrap_or("").to_lowercase()
+}
+
+/// A two-letter region subtag (`AT` for `de-AT`), uppercased: Typst's `region`.
+pub fn region(lang: &str) -> Option<String> {
+    lang.split('-')
+        .skip(1)
+        .find(|t| t.len() == 2 && t.chars().all(|c| c.is_ascii_alphabetic()))
+        .map(str::to_uppercase)
 }
 
 /// CLDR's abbreviated month names for `base`, English when CLDR has none.

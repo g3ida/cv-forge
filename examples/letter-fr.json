@@ -1,0 +1,27 @@
+{
+  "language": "fr",
+  "recipient": {
+    "company": "Kontor Pay SAS",
+    "lines": [
+      "Service recrutement",
+      "12 rue de la République",
+      "69002 Lyon"
+    ]
+  },
+  "dateLine": "Lyon, le 24 novembre 2026",
+  "subject": "Candidature au poste d'architecte HMI Android",
+  "salutation": "Madame,",
+  "paragraphs": [
+    "Depuis douze ans, je conçois des interfaces embarquées pour l'automobile, en dernier lieu l'architecture d'un système d'infodivertissement à trois écrans qui équipe aujourd'hui quatre gammes.",
+    "Dans mon équipe actuelle, j'ai introduit la séparation entre les services du véhicule et l'interface, divisé par deux le temps de démarrage de l'application et monté un banc où chaque modification tourne sur du matériel réel avant d'être fusionnée.",
+    "Votre annonce décrit précisément ce travail : une plateforme qui porte plusieurs marques, et une équipe qui veut livrer vite et sûrement. Je serais heureux de vous montrer lors d'un entretien comment je m'y prends."
+  ],
+  "closing": "Je vous prie d'agréer, Madame, l'expression de mes salutations distinguées.",
+  "signature": "Samuel Duval",
+  "enclosuresLabel": "Pièces jointes",
+  "enclosures": [
+    "CV",
+    "Références"
+  ],
+  "subjectLabel": "Objet :"
+}

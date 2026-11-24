@@ -171,6 +171,15 @@ impl Template {
             .cloned()
     }
 
+    /// Each bundled template's `template.json` as written (name, text): its label, description,
+    /// columns and aliases, for callers that describe the templates.
+    pub fn bundled_configs() -> Vec<(&'static str, &'static str)> {
+        BUNDLED
+            .iter()
+            .map(|(name, json, _)| (*name, *json))
+            .collect()
+    }
+
     /// Every bundled template, in the original's order.
     pub fn available() -> Vec<Arc<Template>> {
         BUNDLED
@@ -265,8 +274,17 @@ mod tests {
         assert_eq!(
             names,
             [
-                "awesome", "classic", "clear", "compact", "contrast", "engineer", "executive", "grid",
-                "modern", "sidebar", "timeline"
+                "awesome",
+                "classic",
+                "clear",
+                "compact",
+                "contrast",
+                "engineer",
+                "executive",
+                "grid",
+                "modern",
+                "sidebar",
+                "timeline"
             ]
         );
         assert_eq!(

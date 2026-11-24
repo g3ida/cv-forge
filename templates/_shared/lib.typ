@@ -105,3 +105,88 @@
   let svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"" + color + "\" stroke-width=\"" + str(stroke) + "\" stroke-linecap=\"round\" stroke-linejoin=\"round\">" + d + "</svg>"
   image(bytes(svg), format: "svg", width: size * 1pt, height: size * 1pt)
 }
+
+// ------------------------------------------------------------------ cover letters
+
+// Letter mode (`data.mode == "letter"`): the template draws its page as on page one of the CV
+// (band, header) and then `letter-body`, cv-builder's _shared/letter.html.j2 with letter.css.
+#let lettering = data.mode == "letter"
+
+// The letter below the header, in the template's body font and colours (`ink`, `heading-ink`
+// and `muted` are its CSS --text, --heading and --muted). `top` is the space between the
+// header's last drawn line and the letter: letter.css's 26pt, less the header's own bottom
+// margin, which collapses into it. `band-left` and `band-right` keep a side band's column free.
+//
+// `data.letter` comes from the builder with each part `none` where cv-builder's page leaves it
+// out and its text as HTML shows it (whitespace collapsed). Every part is a block with CSS's
+// margins, and the space between two parts is the larger of the two margins that meet (CSS
+// margin collapsing), none at the top of a page. A part whose text is blank takes no room, and
+// its margins join those around it. Recipient and date: DIN 5008 and the English habit put
+// the recipient on the left and the date on the right, level with its last line; French puts
+// both on the right, the date under the recipient.
+#let letter-body(font, ink, heading-ink, muted, accent, top: 26pt, band-left: 0pt, band-right: 0pt) = {
+  let l = data.letter
+  // CSS weight 600 on a family without a 600 face falls to the next heavier one.
+  let semibold = if font == "Inter" { 600 } else { 700 }
+  let line(t, ..style) = if t != none and t != "" { block(width: 100%, text(..style, t)) }
+  set text(size: 10.5pt, fill: ink, ..line-box(font, 1.5))
+  set align(left)
+  let r = l.recipient
+  let recipient = if r != none {
+    line(r.company, weight: semibold)
+    for x in r.lines { line(x) }
+  }
+  let date = if l.date != none and l.date != "" { nowrap(text(fill: muted, l.date)) }
+  let head = if l.french {
+    // a column at the right: the recipient, 14pt (the flex gap, there even when a part is
+    // blank), the date
+    set align(right)
+    recipient
+    if r != none and l.date != none { block(width: 100%, height: 14pt) }
+    if date != none { block(width: 100%, date) }
+  } else if r != none and date != none {
+    grid(columns: (1fr, auto), column-gutter: 24pt, align: (left + bottom, right + bottom), recipient, date)
+  } else if date != none {
+    // A date without a recipient on the right, as letter.css means it (`margin-left: auto`;
+    // WeasyPrint leaves it on the left).
+    align(right, date)
+  } else { recipient }
+  // (body or none when blank, margin-top, margin-bottom)
+  let parts = ((block(width: 100%, head), 0pt, 22pt),)
+  let part(t, mt, mb, ..style) = if t != none { ((line(t, ..style), mt, mb),) } else { () }
+  parts += part(l.subject, 0pt, 16pt, weight: 700, fill: heading-ink)
+  parts += part(l.salutation, 0pt, 10pt)
+  for p in l.paragraphs { parts += part(p, 0pt, 9pt) }
+  parts += part(l.closing, 14pt, 0pt)
+  parts += part(l.signature, 26pt, 0pt, weight: semibold, fill: heading-ink)
+  let e = l.enclosures
+  if e != none {
+    let items = e.items.filter(x => x != "")
+    let label = line(e.label, weight: semibold, fill: accent)
+    // The list's 2pt margin meets the label's bottom; without a label, the box's own 20pt top.
+    let body = if label != none or items.len() > 0 {
+      set text(size: 9.5pt, fill: muted)
+      label
+      if label != none and items.len() > 0 { block(width: 100%, height: 2pt) }
+      for x in items { line(x) }
+    }
+    parts.push((body, 20pt, 0pt))
+  }
+  // The top space as its own block: a breakable block repeats its inset on every page.
+  block(width: 100%, height: top)
+  block(width: 100%, inset: (left: band-left, right: band-right), {
+    let below = none
+    for (body, mt, mb) in parts {
+      if body == none {
+        // blank: no room, its margins join the ones around it
+        below = calc.max(if below == none { 0pt } else { below }, mt, mb)
+        continue
+      }
+      // Weak spacing: dropped where a page breaks, as CSS drops margins there.
+      let gap = if below == none { mt } else { calc.max(below, mt) }
+      if gap > 0pt { v(gap, weak: true) }
+      body
+      below = mb
+    }
+  })
+}

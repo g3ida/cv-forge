@@ -3,7 +3,7 @@
 
 use std::path::Path;
 
-use cvforge::{BuildResult, Builder, Cv, Fit, Options};
+use cvforge::{BuildResult, Builder, Cv, Fit, Letter, Options};
 use pyo3::exceptions::{PyOSError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyList};
@@ -118,6 +118,45 @@ fn build<'py>(
     result_dict(py, &result, returned)
 }
 
+/// A cover letter (cv-builder's letter JSON) in the design of the CV: the header its template
+/// draws on page one, its fonts, colours and accent. The PDF is written to `pdf` (or returned
+/// as bytes); a letter longer than a page is drawn, with a note.
+#[pyfunction]
+#[pyo3(signature = (cv, letter, base_dir, *, template=None, accent=None, page_size=None, pdf=None))]
+#[expect(
+    clippy::too_many_arguments,
+    reason = "mirrors cv-builder's options as keyword arguments"
+)]
+fn letter<'py>(
+    py: Python<'py>,
+    cv: &str,
+    letter: &str,
+    base_dir: &str,
+    template: Option<String>,
+    accent: Option<String>,
+    page_size: Option<String>,
+    pdf: Option<String>,
+) -> PyResult<Bound<'py, PyDict>> {
+    let cv = parse(cv)?;
+    let letter =
+        Letter::from_json(letter).map_err(|e| PyValueError::new_err(e.report("letter")))?;
+    let opts = options(template, accent, page_size, None);
+    let base = base_dir.to_string();
+    let (bytes, result) = py
+        .detach(move || Builder::new(cv, Path::new(&base), &opts)?.letter_pdf(&letter, None))
+        .map_err(|e| RenderError::new_err(e.0))?;
+    let d = PyDict::new(py);
+    d.set_item("pages", result.pages)?;
+    d.set_item("notes", PyList::new(py, &result.notes)?)?;
+    match pdf {
+        Some(path) => {
+            std::fs::write(&path, &bytes).map_err(|e| PyOSError::new_err(format!("{path}: {e}")))?
+        }
+        None => d.set_item("pdf", PyBytes::new(py, &bytes))?,
+    }
+    Ok(d)
+}
+
 /// The fewest pages the CV can take under any page limit (at the tightest line spacing).
 #[pyfunction]
 #[pyo3(signature = (cv, base_dir, *, template=None))]
@@ -191,9 +230,17 @@ fn _cvforge(m: &Bound<'_, PyModule>) -> PyResult<()> {
             .map(|t| t.name.clone())
             .collect::<Vec<_>>(),
     )?;
+    // Each bundled template's template.json (name -> text): labels, descriptions, columns and
+    // aliases, so a caller describes the templates without cv-builder's files.
+    let configs = PyDict::new(m.py());
+    for (name, json) in cvforge::template::Template::bundled_configs() {
+        configs.set_item(name, json)?;
+    }
+    m.add("TEMPLATE_JSON", configs)?;
     m.add("RenderError", m.py().get_type::<RenderError>())?;
     m.add_function(wrap_pyfunction!(build, m)?)?;
     m.add_function(wrap_pyfunction!(fewest_pages, m)?)?;
+    m.add_function(wrap_pyfunction!(letter, m)?)?;
     m.add_function(wrap_pyfunction!(fit, m)?)?;
     m.add_function(wrap_pyfunction!(problems, m)?)?;
     Ok(())

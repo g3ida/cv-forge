@@ -239,3 +239,38 @@ example, with and without its own layout (`CVBUILDER_SRC=<career-ledger>/cv-buil
 tools/compare.py <template>`), and career-ledger's engine tests compare all eleven. Adding the
 two fonts leaves `LANGUAGES` as it was (403 codes). Eleven recorded cases now list eleven
 templates where they listed six (`cases/known-diffs.md`).
+
+## ADR-025: Cover letters in a CV's design
+Status: accepted (2026-11-24)
+Context: career-ledger's cv-builder draws cover letters (`letter.py`, `_shared/letter.html.j2`
+and `letter.css`): the header the CV's template draws on page one, then the letter in that
+template's fonts and colours, so a letter and a CV sent together read as one application.
+career-ledger kept cv-builder and WeasyPrint for letters only; dropping them needs cv-forge to
+draw letters.
+Decision: Each template's `cv.typ` gains a letter mode (`lettering`): its page as on page one
+(the side band too) and `header()`, then `letter-body` from `lib.typ`, given the template's body
+font, its CSS `--text`, `--heading` and `--muted`, the space between header and letter
+(letter.css's 26pt less the header's own bottom margin, which collapses into it; a padding does
+not) and a side band's width (sidebar 212pt on the left, contrast 192pt on the right). CSS
+weight 600 is Inter's semibold and the bold face elsewhere, as WeasyPrint picks it. `letter.rs`
+ports the `Letter` model (with pydantic's messages), the notes (the CV's notes about columns and
+sections dropped; "the letter takes N pages; a letter has one") and hands the template a view of
+the letter: parts left out where the page leaves them out, whitespace collapsed as HTML collapses
+it, a blank part taking no room while its margins still meet its neighbours'. The space between
+parts is Typst's weak spacing, which a page break drops as CSS drops margins there. The command
+line gains `letter` (cv-builder's arguments; `--html` writes the data the template got) and the
+Python module `letter()`; `TEMPLATE_JSON` gives each template's `template.json`, so
+career-ledger describes the templates without cv-builder's files. Typst errors now name the
+file and line.
+Consequences: `tools/compare_letter.py` draws each letter with both and compares pages, words in
+reading order and every word's box: all eleven templates in German, English and French, and
+twelve odd letters (parts missing, an empty letter, blank and multi-line text, `de-AT`, French
+without a recipient, a recipient wrapping in a narrow column, letters of two to five pages),
+match with no word more than 0.5pt away (at most 0.17pt), except where WeasyPrint departs from
+letter.css: a date without a recipient sits on the right, as `margin-left: auto` asks
+(WeasyPrint leaves it on the left); a recipient that wraps in contrast's narrow column pushes the
+date and subject down (WeasyPrint draws the wrapped lines over each other); a paragraph broken
+across pages keeps two lines on each side where letter.css asks for three (Typst prevents
+single lines only), so a letter over a page breaks up to two lines apart, on as many pages in
+every case tried. Side by side: `docs/letter-<template>-side-by-side.png`. No recorded case
+changed (`cases/known-diffs.md`).

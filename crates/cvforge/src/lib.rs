@@ -8,10 +8,12 @@
 //! The pipeline, names and messages follow the original module by module (see `GLOSSARY.md`):
 //! [`model`] (`model.py`), [`view`] and [`text`] (`view.py`), [`dates`], [`paginate`],
 //! [`build`] (`render.py`), [`template`] and [`wording`]. [`engine`] is the Typst world.
+//! [`letter`] draws cover letters in a CV's design (career-ledger's `letter.py`).
 
 pub mod build;
 pub mod dates;
 pub mod engine;
+pub mod letter;
 pub mod model;
 #[rustfmt::skip]
 pub mod months;
@@ -24,5 +26,6 @@ pub mod view;
 pub mod wording;
 
 pub use build::{BuildResult, Builder, Fit, Options, RenderError};
+pub use letter::{Letter, LetterResult, load_letter};
 pub use model::{Cv, LoadError, load_cv};
 pub use template::Template;

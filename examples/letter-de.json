@@ -1,0 +1,16 @@
+{
+  "language": "de",
+  "recipient": {"company": "Kontor Pay GmbH", "lines": ["Personalabteilung", "Friedrichstraße 12", "10117 Berlin"]},
+  "dateLine": "Lyon, 24. November 2026",
+  "subject": "Bewerbung als Android HMI Architect",
+  "salutation": "Sehr geehrte Frau Muster,",
+  "paragraphs": [
+    "seit zwölf Jahren entwerfe ich Bedienoberflächen für Fahrzeuge, zuletzt die Architektur eines Infotainment-Systems mit drei Displays, das heute in vier Modellreihen fährt.",
+    "In meinem jetzigen Team habe ich die Trennung zwischen Fahrzeugdiensten und Oberfläche eingeführt, die Startzeit der Anwendung halbiert und eine Testumgebung aufgebaut, in der jede Änderung auf echter Hardware geprüft wird, bevor sie zusammengeführt wird.",
+    "Ihre Ausschreibung beschreibt genau diese Arbeit: eine Plattform, die mehrere Marken trägt, und ein Team, das schnell und sicher ausliefern will. Gern würde ich Ihnen in einem Gespräch zeigen, wie ich dabei vorgehe."
+  ],
+  "closing": "Mit freundlichen Grüßen",
+  "signature": "Samuel Duval",
+  "enclosuresLabel": "Anlagen",
+  "enclosures": ["Lebenslauf", "Arbeitszeugnisse"]
+}

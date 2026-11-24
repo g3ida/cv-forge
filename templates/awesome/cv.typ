@@ -182,6 +182,12 @@
     height: data.page.height * 1pt,
     margin: (top: m.top * 1pt, right: m.right * 1pt, bottom: m.bottom * 1pt, left: m.left * 1pt),
   )
+  // A cover letter: this page's band and header, then the letter. The letter's 26pt top margin
+  // meets .header's 10pt margin.
+  if lettering {
+    header()
+    letter-body(sans, ink, heading-ink, muted, accent, top: 16pt)
+  }
   for (pi, p) in data.pages.enumerate() {
     if pi > 0 { pagebreak() }
     if p.header { header() }

@@ -23,6 +23,7 @@ use typst::utils::PicoStr;
 use typst_layout::PagedDocument;
 
 use crate::engine::{self, Engine, Job};
+use crate::letter::{Letter, LetterResult, LetterView, letter_notes};
 use crate::model::{Cv, SECTION_IDS};
 use crate::paginate::{Overflow, Unit, paginate_column};
 use crate::pyfmt;
@@ -500,7 +501,7 @@ struct DocData<'a> {
     tightness: f64,
     page: Geometry,
     accent: &'a str,
-    title: &'a str,
+    title: String,
     /// Typst's `lang` (the primary subtag) and `region` (a two-letter region subtag, if any).
     lang: String,
     region: Option<String>,
@@ -513,6 +514,9 @@ struct DocData<'a> {
     columns: Vec<&'a str>,
     repeat_titles: bool,
     pages: Vec<PageData<'a>>,
+    /// In letter mode: the letter to draw below the header.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    letter: Option<LetterView>,
 }
 
 // ------------------------------------------------------------------ builder
@@ -739,7 +743,7 @@ impl Builder {
                 margins: self.template.config.margins,
             },
             accent: &self.settings.accent,
-            title: &self.settings.document_title,
+            title: self.settings.document_title.clone(),
             lang: self.settings.wording.base(),
             region: self.settings.wording.region(),
             words: &self.settings.wording,
@@ -754,6 +758,7 @@ impl Builder {
             columns: self.settings.columns.keys().map(String::as_str).collect(),
             repeat_titles: self.template.config.repeat_titles,
             pages,
+            letter: None,
         }
     }
 
@@ -763,7 +768,20 @@ impl Builder {
         typst::compile::<PagedDocument>(&job)
             .output
             .map_err(|errors| {
-                let messages: Vec<String> = errors.iter().map(|e| e.message.to_string()).collect();
+                // Where in the template, for whoever writes one: `cv.typ:12: message`.
+                let messages: Vec<String> = errors
+                    .iter()
+                    .map(|e| {
+                        let place = e.span.id().and_then(|id| {
+                            let source = typst::World::source(&job, id).ok()?;
+                            let at = typst::WorldExt::range(&job, e.span)?.start;
+                            let line = source.lines().byte_to_line(at)? + 1;
+                            let file = id.vpath().get_without_slash().to_string();
+                            Some(format!("{file}:{line}: "))
+                        });
+                        format!("{}{}", place.unwrap_or_default(), e.message)
+                    })
+                    .collect();
                 RenderError(format!(
                     "template {}: {}",
                     pyfmt::repr(&self.template.name),
@@ -1100,6 +1118,94 @@ impl Builder {
         Ok(result)
     }
 
+    fn write_pdf_bytes(&mut self, doc: &PagedDocument) -> Result<Vec<u8>, RenderError> {
+        let started = std::time::Instant::now();
+        let options = typst_pdf::PdfOptions {
+            creator: Smart::Custom(Some("cv-forge".into())),
+            ..typst_pdf::PdfOptions::default()
+        };
+        let pdf = typst_pdf::pdf(doc, &options).map_err(|errors| {
+            RenderError(
+                errors
+                    .iter()
+                    .map(|e| e.message.to_string())
+                    .collect::<Vec<_>>()
+                    .join("; "),
+            )
+        })?;
+        self.timings.pdf_ms += started.elapsed().as_secs_f64() * 1e3;
+        Ok(pdf)
+    }
+
+    fn write_debug(path: &Path, data: &DocData<'_>) -> Result<(), RenderError> {
+        let text = serde_json::to_string_pretty(data).map_err(|e| RenderError(e.to_string()))?;
+        std::fs::write(path, text).map_err(|e| {
+            RenderError(format!(
+                "{}: {}",
+                path.display(),
+                crate::model::io_message(&e)
+            ))
+        })
+    }
+
+    /// A cover letter in this CV's design: the header its template draws on page one, then the
+    /// letter, in the template's fonts, colours and accent (`letter.py`'s `LetterBuilder`).
+    /// `debug_target` also writes the data the template got.
+    pub fn letter_pdf(
+        &mut self,
+        letter: &Letter,
+        debug_target: Option<&Path>,
+    ) -> Result<(Vec<u8>, LetterResult), RenderError> {
+        let doc = self.letter_document(letter, debug_target)?;
+        let pdf = self.write_pdf_bytes(&doc)?;
+        let pages = doc.pages().len();
+        let mut notes = letter_notes(&self.notes);
+        if pages > 1 {
+            notes.push(format!("the letter takes {pages} pages; a letter has one"));
+        }
+        crate::engine::after_build();
+        Ok((pdf, LetterResult { pages, notes }))
+    }
+
+    /// The letter typeset, before it becomes a PDF.
+    pub fn letter_document(
+        &mut self,
+        letter: &Letter,
+        debug_target: Option<&Path>,
+    ) -> Result<PagedDocument, RenderError> {
+        let mut data = self.data("letter", &[], &[]);
+        let lang = letter.lang(&self.settings.wording.lang);
+        data.title = letter.title(&self.cv.basics.name);
+        data.lang = crate::wording::base(lang);
+        data.region = crate::wording::region(lang);
+        data.letter = Some(letter.view());
+        if let Some(path) = debug_target {
+            Self::write_debug(path, &data)?;
+        }
+        let started = std::time::Instant::now();
+        let doc = self.compile(&data)?;
+        self.timings.typeset_ms += started.elapsed().as_secs_f64() * 1e3;
+        Ok(doc)
+    }
+
+    /// [`Builder::letter_pdf`], written to `target`.
+    pub fn write_letter_pdf(
+        &mut self,
+        letter: &Letter,
+        target: &Path,
+        debug_target: Option<&Path>,
+    ) -> Result<LetterResult, RenderError> {
+        let (pdf, result) = self.letter_pdf(letter, debug_target)?;
+        std::fs::write(target, pdf).map_err(|e| {
+            RenderError(format!(
+                "{}: {}",
+                target.display(),
+                crate::model::io_message(&e)
+            ))
+        })?;
+        Ok(result)
+    }
+
     /// The PDF's bytes, without writing a file.
     pub fn pdf(
         &mut self,
@@ -1113,34 +1219,12 @@ impl Builder {
         }
         let data = self.data("render", &pages, &overflows);
         if let Some(path) = debug_target {
-            let text =
-                serde_json::to_string_pretty(&data).map_err(|e| RenderError(e.to_string()))?;
-            std::fs::write(path, text).map_err(|e| {
-                RenderError(format!(
-                    "{}: {}",
-                    path.display(),
-                    crate::model::io_message(&e)
-                ))
-            })?;
+            Self::write_debug(path, &data)?;
         }
         let started = std::time::Instant::now();
         let doc = self.compile(&data)?;
         self.timings.typeset_ms += started.elapsed().as_secs_f64() * 1e3;
-        let started = std::time::Instant::now();
-        let options = typst_pdf::PdfOptions {
-            creator: Smart::Custom(Some("cv-forge".into())),
-            ..typst_pdf::PdfOptions::default()
-        };
-        let pdf = typst_pdf::pdf(&doc, &options).map_err(|errors| {
-            RenderError(
-                errors
-                    .iter()
-                    .map(|e| e.message.to_string())
-                    .collect::<Vec<_>>()
-                    .join("; "),
-            )
-        })?;
-        self.timings.pdf_ms += started.elapsed().as_secs_f64() * 1e3;
+        let pdf = self.write_pdf_bytes(&doc)?;
         let mut notes = self.notes.clone();
         for o in &overflows {
             let index = self
@@ -1240,4 +1324,94 @@ pub fn thumbnail_png(doc: &PagedDocument, dpi: f64) -> Result<Vec<u8>, RenderErr
         .map_err(|e| RenderError(e.to_string()))?;
     writer.finish().map_err(|e| RenderError(e.to_string()))?;
     Ok(out)
+}
+
+#[cfg(test)]
+mod letter_tests {
+    use super::*;
+    use crate::model::Cv;
+    use crate::template::Template;
+    use typst::layout::{Frame, FrameItem};
+
+    const CV: &str = include_str!("../../../examples/android-hmi-architect.json");
+    const LETTER: &str = include_str!("../../../examples/letter-de.json");
+
+    fn text(frame: &Frame, out: &mut String) {
+        for (_, item) in frame.items() {
+            match item {
+                FrameItem::Group(g) => text(&g.frame, out),
+                FrameItem::Text(t) => {
+                    out.push_str(&t.text);
+                    out.push(' ');
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn examples() -> PathBuf {
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples")
+    }
+
+    fn letter_in(template: &str, letter: &Letter) -> (usize, String, Vec<String>) {
+        let cv = Cv::from_json(CV).expect("the example CV is valid");
+        let options = Options {
+            template: Some(template.into()),
+            ..Options::default()
+        };
+        let mut b = Builder::new(cv, &examples(), &options).expect("builder");
+        let doc = b.letter_document(letter, None).expect("typeset");
+        let mut words = String::new();
+        for page in doc.pages() {
+            text(&page.frame, &mut words);
+        }
+        let (_, result) = b.letter_pdf(letter, None).expect("pdf");
+        (doc.pages().len(), words, result.notes)
+    }
+
+    /// Every template draws a one-page letter: its header, then the letter's parts in order.
+    /// The CV is laid out for another template; notes about its columns say nothing here.
+    #[test]
+    fn a_letter_in_each_template() {
+        let letter = Letter::from_json(LETTER).expect("valid letter");
+        for t in Template::available() {
+            let (pages, words, notes) = letter_in(&t.name, &letter);
+            assert_eq!(pages, 1, "{}", t.name);
+            assert!(notes.is_empty(), "{}: {notes:?}", t.name);
+            let at = |s: &str| {
+                words
+                    .find(s)
+                    .unwrap_or_else(|| panic!("{}: {s:?} not in {words:?}", t.name))
+            };
+            let name = words.to_lowercase().find("duval").expect("the name");
+            let order = [
+                at("Kontor Pay GmbH"),
+                at("Bewerbung als Android HMI Architect"),
+                at("Sehr geehrte Frau Muster,"),
+                at("seit zwölf Jahren"),
+                at("Mit freundlichen Grüßen"),
+                at("Samuel Duval"),
+                at("Anlagen"),
+                at("Arbeitszeugnisse"),
+            ];
+            assert!(name < order[0], "{}: the header comes first", t.name);
+            assert!(
+                order.windows(2).all(|w| w[0] < w[1]),
+                "{}: {order:?}",
+                t.name
+            );
+        }
+    }
+
+    #[test]
+    fn a_long_letter_says_so() {
+        let mut letter = Letter::from_json(LETTER).expect("valid letter");
+        letter.paragraphs = vec!["Ein sehr langer Absatz über die Arbeit. ".repeat(60); 4];
+        let (pages, _, notes) = letter_in("clear", &letter);
+        assert!(pages > 1);
+        assert_eq!(
+            notes,
+            [format!("the letter takes {pages} pages; a letter has one")]
+        );
+    }
 }

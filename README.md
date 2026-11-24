@@ -1,7 +1,8 @@
 # cv-forge
 
 PDF CVs from JSON Resume files, fast: a Rust port of cv-builder with Typst in place of
-WeasyPrint. Same JSON format, same templates, same page breaks, same messages.
+WeasyPrint. Same JSON format, same templates, same page breaks, same messages. Cover letters
+too, in the design of the CV they go with.
 
 ```
 cv.json ──validate──▶ Cv ──view──▶ sections ──measure (Typst)──▶ paginate ──typeset──▶ PDF
@@ -13,6 +14,7 @@ cv.json ──validate──▶ Cv ──view──▶ sections ──measure (T
 cargo build --release
 ./target/release/cv-forge build examples/android-hmi-architect.json -t classic
 ./target/release/cv-forge build my-cv.json --max-pages 2
+./target/release/cv-forge letter examples/android-hmi-architect.json examples/letter-de.json -t sidebar
 ./target/release/cv-forge validate my-cv.json
 ./target/release/cv-forge templates
 ```
@@ -60,7 +62,12 @@ batches across processes (ADR-013).
 import cvforge
 r = cvforge.build(cv_json, base_dir, template="compact", max_pages=2, pdf="cv.pdf", thumbnail_dpi=60)
 r["pages"], r["fit"], r["notes"], r["thumbnail"]      # PNG bytes of page 1
+r = cvforge.letter(cv_json, letter_json, base_dir, template="sidebar", pdf="letter.pdf")
+r["pages"], r["notes"]
 ```
+
+A letter (`examples/letter-de.json`) comes already worded: date line, subject, salutation and
+closing in the letter's language; cv-forge draws it below the CV template's header (ADR-025).
 
 `tools/install-into-career-ledger.sh` builds the cv-forge wheel and installs it where auto-apply
 uses it (DECISIONS.md ADR-022). pdf-raster is a career-ledger workspace project, installed by its
@@ -78,6 +85,8 @@ uses it (DECISIONS.md ADR-022). pdf-raster is a career-ledger workspace project,
 - `ports/units`: rust-anything's unit port (PyO3) that checks the library's functions against
   the original's recorded behavior.
 - `tools/cvcheck.py`: reduces a PDF to what the equivalence bar compares.
+- `tools/compare.py`, `tools/compare_letter.py`: a CV or a cover letter drawn by cv-builder and
+  by cv-forge, compared (pages, words, word positions for letters; `--image` side by side).
 
 ## Checks
 

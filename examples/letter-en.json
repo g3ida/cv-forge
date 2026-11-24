@@ -1,0 +1,26 @@
+{
+  "language": "en",
+  "recipient": {
+    "company": "Kontor Pay Ltd",
+    "lines": [
+      "Hiring team",
+      "12 Market Street",
+      "London EC2A 4NE"
+    ]
+  },
+  "dateLine": "Lyon, 24 November 2026",
+  "subject": "Application for the Android HMI Architect role",
+  "salutation": "Dear Ms Muster,",
+  "paragraphs": [
+    "For twelve years I have designed in-car user interfaces, most recently the architecture of a three-display infotainment system that now ships in four model lines.",
+    "In my current team I introduced the split between vehicle services and the interface, halved the application's start time and built a test bench where every change runs on real hardware before it is merged.",
+    "Your posting describes exactly this work: one platform carrying several brands, and a team that wants to ship fast and safely. I would be glad to show you in a conversation how I go about it."
+  ],
+  "closing": "Kind regards,",
+  "signature": "Samuel Duval",
+  "enclosuresLabel": "Enclosures",
+  "enclosures": [
+    "CV",
+    "References"
+  ]
+}

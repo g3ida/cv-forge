@@ -6,3 +6,4 @@ target/
 *.pdf
 /bench-out/
 /dist/
+__pycache__/

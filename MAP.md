@@ -13,7 +13,8 @@ markers · 012 interpolated fit · 013 batch across processes · 014 program nam
 until the cutover · 015 original's crash cases · 016 classic signed off · 017 no-break text ·
 018 the five other templates signed off · 019 no-break boxes measured
 only when needed · 020 page numbers from the plan · 021 thumbnails from the layout · 022 Python
-modules · 023 CVs in French, German and other languages · 024 templates added after the snapshot
+modules · 023 CVs in French, German and other languages · 024 templates added after the snapshot ·
+025 cover letters
 
 ## Units
 
@@ -37,12 +38,14 @@ modules · 023 CVs in French, German and other languages · 024 templates added 
 | template `timeline` | done | build-timeline* |
 | templates `engineer`, `awesome`, `executive`, `grid`, `contrast` (ADR-024) | done | `tools/compare.py` against career-ledger's cv-builder; career-ledger's engine tests |
 | Thumbnail from the layout (`--thumbnail`) | done | ADR-021; pdf-raster/docs/thumbnail-paths.png |
+| Cover letters (career-ledger's `letter.py`, `_shared/letter.html.j2`, `letter.css`; ADR-025) | done | `tools/compare_letter.py`: 11 templates × de/en/fr and 12 odd letters, words and positions; Rust tests |
 | Python module (PyO3) for auto-apply | open | shadow mode against auto-apply's tests |
 
 ## State (checkpoint 2)
 
-- Whole-app replay: 308/308 (18 cases changed by approval, ADR-015, listed in
-  `cases/known-diffs.md`). Report: `original/rust/app-cases/replay-report.md`; command:
+- Whole-app replay: 274/308; the 34 others differ only by what cv-builder learned after the
+  snapshot (eleven templates, the schema's `language` and `dateStyle`), and 18 cases were changed
+  by approval (ADR-015); all listed in `cases/known-diffs.md`. Report: `original/rust/app-cases/replay-report.md`; command:
   `rust-anything app replay original --build "env CVCHECK_BIN=$PWD/target/release/cv-forge python3 -I $PWD/tools/cvcheck.py"`.
 - Unit port `ports/units`: 1887/1887 cases, gate passed. `rust-anything bench` times these
   through the Python bridge (1.28x overall; the smallest functions lose to the crossing). In

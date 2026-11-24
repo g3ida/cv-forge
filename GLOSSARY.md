@@ -30,3 +30,5 @@ cv-builder's terms and their names in cv-forge.
 | build result | Pages, notes, overflows, fit, last page fill | `build::BuildResult` (plus `Timings`) |
 | marker | A position the measuring layout reports (new in cv-forge) | `mark()` in `lib.typ`, `<cvforge-m>` |
 | engine / job | The Typst world: shared library and fonts / one document | `engine::Engine`, `engine::Job` |
+| letter | A cover letter, already worded, drawn below the CV template's header | `letter::Letter`, `Builder::letter_pdf`, `letter-body` in `lib.typ` |
+| letter view | The letter as its template draws it: parts left out, whitespace collapsed as HTML does | `letter::LetterView` |
